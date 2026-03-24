@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استراتيجية التحول التشغيلي — تعاونية عسير</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gd:  #3a4f2c;   /* dark olive — from logo */
+      --gm:  #4a6235;   /* mid olive */
+      --gl:  #6b8c4e;   /* light olive */
+      --gll: #8aaa68;   /* lighter accent */
+      --gp:  #f0f4ea;   /* pale green */
+      --gp2: #e3ebdb;
+      --wh:  #ffffff;
+      --tx:  #1a1a1a;
+      --tb:  #2d3a20;
+      --tm:  #8a9a7a;
+      --br:  #d4ddc8;
+      --gold:#c9a84c;
+      --bg-slide: #fafcf7;
+    }
+
+    body {
+      font-family: 'Cairo', 'Tahoma', Arial, sans-serif;
+      direction: rtl;
+      background: #2d3a20;
+      height: 100vh;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+
+    /* ─── WATERMARK ─── */
+    .wm {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .wm svg { position: absolute; }
+
+    .shell {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,0,0,.5);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-slide);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .42s ease, transform .42s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .slide.active { opacity: 1; transform: translateY(0); pointer-events: all; }
+    .slide.exit   { opacity: 0; transform: translateY(-28px); }
+
+    /* ─── TOP BAR (logo strip) ─── */
+    .top-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 52px 10px 52px;
+      background: var(--gd);
+      flex-shrink: 0;
+    }
+    .top-bar-logo { display: flex; align-items: center; gap: 12px; }
+    .top-bar-logo svg { width: 38px; height: 38px; }
+    .top-bar-name {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: right;
+    }
+    .top-bar-name span { display: block; font-size: 10px; font-weight: 400; opacity: .75; }
+    .top-bar-tagline {
+      color: rgba(255,255,255,.55);
+      font-size: 11px;
+      direction: ltr;
+    }
+
+    /* ─── SLIDE BODY ─── */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 52px 10px;
+      position: relative;
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    /* ─── HEADING ─── */
+    .sh { margin-bottom: 18px; flex-shrink: 0; }
+    .st {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 34px;
+      color: var(--gd);
+      text-align: right;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .sr {
+      height: 3px;
+      background: linear-gradient(to left, var(--gd) 0%, var(--gll) 60%, transparent 100%);
+      border-radius: 2px;
+    }
+    .sb { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ─── FOOTER ─── */
+    .sf {
+      flex-shrink: 0;
+      padding: 8px 52px;
+      background: var(--gd);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sf span { font-size: 10px; color: rgba(255,255,255,.65); font-family: 'Cairo', sans-serif; }
+    .sf .pg-num {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* ─── SLIDE 1 — COVER ─── */
+    #s1 .wm-cover svg { opacity: .06; }
+    .cover-inner {
+      flex: 1;
+      display: flex;
+      gap: 0;
+    }
+    .cover-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 52px;
+    }
+    .c-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gl);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .c-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 54px;
+      color: var(--gd);
+      line-height: 1.22;
+      margin-bottom: 20px;
+    }
+    .c-accent {
+      width: 68px;
+      height: 4px;
+      background: linear-gradient(to left, var(--gl), var(--gll));
+      border-radius: 2px;
+      margin-bottom: 22px;
+    }
+    .c-goal { font-size: 20px; color: var(--tb); line-height: 1.6; }
+    .c-goal strong {
+      display: block;
+      font-size: 30px;
+      color: var(--gd);
+      font-weight: 900;
+      margin-top: 4px;
+    }
+    .cover-right {
+      width: 320px;
+      flex-shrink: 0;
+      background: linear-gradient(160deg, var(--gd) 0%, var(--gm) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cover-logo-big { position: relative; z-index: 2; }
+    .cover-stats {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cstat {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+    }
+    .cstat-num { font-size: 24px; font-weight: 900; color: #fff; font-family: 'Cairo', sans-serif; }
+    .cstat-lbl { font-size: 11px; color: rgba(255,255,255,.7); margin-top: 2px; }
+
+    /* ─── SLIDE 2 — FLOWCHART ─── */
+    .flow-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      direction: ltr;
+      gap: 0;
+      padding-bottom: 10px;
+    }
+    .fbox {
+      border: 2px solid var(--gd);
+      border-radius: 14px;
+      padding: 14px 14px;
+      text-align: center;
+      min-width: 128px;
+      background: var(--wh);
+      cursor: default;
+      transition: transform .22s, box-shadow .22s;
+      box-shadow: 0 3px 14px rgba(58,79,44,.1);
+    }
+    .fbox:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(58,79,44,.2); }
+    .fbox-icon { font-size: 26px; margin-bottom: 5px; }
+    .fbox-name {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--gd);
+      margin-bottom: 4px;
+      direction: rtl;
+    }
+    .fbox-desc { font-size: 12px; color: #666; line-height: 1.5; direction: rtl; }
+    .farrow { display: flex; align-items: center; padding: 0 8px; }
+    .fline {
+      width: 50px;
+      height: 2px;
+      background: linear-gradient(to right, var(--gll), var(--gl));
+      position: relative;
+    }
+    .fline::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      width: 9px;
+      height: 9px;
+      border-top: 2px solid var(--gl);
+      border-right: 2px solid var(--gl);
+    }
+
+    /* ─── SLIDES 3 & 4 — FOCUS ─── */
+    .focus-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 24px;
+    }
+    .feq {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 36px;
+      color: var(--gd);
+      line-height: 1.5;
+    }
+    .feq .op { color: var(--gll); margin: 0 10px; font-size: 32px; }
+    .fnote { font-size: 18px; color: #555; max-width: 620px; line-height: 1.6; }
+    .fnote strong { color: var(--gd); }
+    .fdiv { width: 60px; height: 3px; background: var(--br); border-radius: 2px; }
+
+    /* Savings Cards (slide 4) */
+    .savings-cards {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .scard {
+      background: var(--wh);
+      border: 2px solid var(--gp2);
+      border-radius: 16px;
+      padding: 24px 32px;
+      text-align: center;
+      min-width: 240px;
+      box-shadow: 0 4px 18px rgba(58,79,44,.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .scard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--gd), var(--gll));
+    }
+    .scard-icon { font-size: 36px; margin-bottom: 10px; }
+    .scard-val { font-size: 28px; font-weight: 900; color: var(--gd); font-family: 'Cairo', sans-serif; }
+    .scard-lbl { font-size: 14px; color: #666; margin-top: 4px; line-height: 1.4; }
+
+    /* ─── SLIDES 5 & 6 — GRID ─── */
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      flex: 1;
+      align-content: center;
+      align-items: start;
+    }
+    .gblock {
+      background: var(--wh);
+      border-top: 4px solid var(--gd);
+      border-radius: 10px;
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 3px 14px rgba(58,79,44,.08);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .gblock:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(58,79,44,.15); }
+    .gblock .ph-num {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--gp2);
+      font-family: 'Cairo', sans-serif;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .gblock .lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gl);
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+    .gblock .ttl {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--gd);
+      margin-bottom: 4px;
+    }
+    .gblock .dsc { font-size: 11px; color: var(--tb); line-height: 1.4; }
+    .gblock .ph-icon { font-size: 22px; margin-bottom: 3px; }
+    .gblock .mtr {
+      margin-top: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--gm);
+      background: var(--gp);
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .gblock.kpi { border-top-color: var(--gll); }
+
+    /* KPI gauge-like display */
+    .kpi-big {
+      margin-top: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 30px;
+      color: var(--gd);
+    }
+    .kpi-big small { font-size: 13px; font-weight: 400; color: #888; display: block; margin-top: 2px; }
+
+    /* ─── SLIDE 7 — CHECKLIST ─── */
+    .cklist {
+      list-style: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 9px;
+    }
+    .cki {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--wh);
+      border-radius: 10px;
+      padding: 10px 16px;
+      box-shadow: 0 2px 10px rgba(58,79,44,.07);
+      border-right: 4px solid var(--gd);
+    }
+    .ckico {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--gd);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cktxt { font-size: 15px; color: var(--tb); line-height: 1.3; font-family: 'Cairo', sans-serif; }
+    .cktxt strong { color: var(--gd); }
+
+    /* ─── SLIDE 8 — TABLE ─── */
+    .rtbl { width: 100%; border-collapse: collapse; flex: 1; }
+    .rtbl th {
+      background: var(--gd);
+      color: #fff;
+      padding: 14px 18px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .rtbl th:not(:last-child) { border-left: 1px solid rgba(255,255,255,.18); }
+    .rtbl td {
+      padding: 16px 18px;
+      text-align: center;
+      border-bottom: 1px solid var(--br);
+      font-size: 16px;
+      line-height: 1.5;
+      font-family: 'Cairo', sans-serif;
+    }
+    .rtbl tr td:not(:last-child) { border-left: 1px solid var(--br); }
+    .rtbl tr:nth-child(even) td { background: var(--gp); }
+    .col-dept { font-family: 'Cairo', sans-serif; font-weight: 700; color: var(--gd); font-size: 17px; }
+    .col-res  {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      background: var(--gm) !important;
+      border-radius: 6px;
+      padding: 6px 12px !important;
+    }
+
+    /* ─── SLIDE 9 — FINAL ─── */
+    .final-bg {
+      flex: 1;
+      background: linear-gradient(135deg, var(--gd) 0%, var(--gm) 60%, var(--gl) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .final-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .fhl {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 62px;
+      color: #fff;
+      line-height: 1.25;
+      position: relative;
+      z-index: 2;
+    }
+    .fl { width: 100px; height: 4px; background: var(--gll); border-radius: 2px; position: relative; z-index: 2; }
+    .fsub { font-size: 20px; color: rgba(255,255,255,.8); max-width: 500px; line-height: 1.6; position: relative; z-index: 2; }
+    .fbrand { font-size: 13px; color: rgba(255,255,255,.5); position: relative; z-index: 2; }
+
+    /* ─── NAV BAR ─── */
+    .nav-bar {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      direction: ltr;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(58,79,44,.92);
+      backdrop-filter: blur(10px);
+      padding: 8px 18px;
+      border-radius: 40px;
+      box-shadow: 0 6px 28px rgba(0,0,0,.3);
+      z-index: 999;
+    }
+    .nbtn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.5);
+      background: transparent;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s, border-color .18s;
+      font-family: 'Cairo', sans-serif;
+    }
+    .nbtn:hover:not(:disabled) { background: rgba(255,255,255,.2); border-color: #fff; }
+    .nbtn:disabled { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.3); cursor: default; }
+    .ndots { display: flex; gap: 6px; align-items: center; }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.35);
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .dot.on { background: #fff; transform: scale(1.5); }
+    .ncnt { font-size: 11px; color: rgba(255,255,255,.6); min-width: 32px; text-align: center; font-family: 'Cairo', sans-serif; }
+
+    /* ─── BAR CHART ─── */
+    .bar-chart-wrap {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 18px;
+      padding: 10px 20px 0;
+    }
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      max-width: 110px;
+    }
+    .bar-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gd);
+      font-family: 'Cairo', sans-serif;
+    }
+    .bar {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(to top, var(--gd), var(--gll));
+      transition: height .5s ease;
+      position: relative;
+    }
+    .bar-lbl {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      line-height: 1.3;
+      font-family: 'Cairo', sans-serif;
+    }
+    .bar-axis {
+      height: 2px;
+      background: var(--br);
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    /* ─── RADIAL GAUGE (KPI slide) ─── */
+    .kpi-gauges {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      align-content: center;
+      align-items: start;
+    }
+    .gauge-card {
+      background: var(--wh);
+      border-radius: 10px;
+      padding: 8px 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 3px 14px rgba(58,79,44,.09);
+      gap: 3px;
+    }
+    .gauge-card .gc-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gl);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .gauge-card .gc-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--gd);
+      font-family: 'Cairo', sans-serif;
+    }
+    .gauge-card .gc-desc {
+      font-size: 10px;
+      color: #777;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .gauge-card .gc-val {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--gd);
+      font-family: 'Cairo', sans-serif;
+      margin-top: 1px;
+    }
+    .gauge-card .gc-unit { font-size: 11px; color: #888; }
+  </style>
+</head>
+<body>
+
+<!-- ─── OSOUL LOGO SVG (reusable inline) ─── -->
+<svg style="display:none" id="osoul-logo-def">
+  <defs>
+    <symbol id="osoul-logo" viewBox="0 0 200 200">
+      <!-- Stylized chicken head inside a circle — represents Osoul brand -->
+      <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" stroke-width="6"/>
+      <!-- Body -->
+      <ellipse cx="100" cy="118" rx="38" ry="30" fill="currentColor"/>
+      <!-- Head -->
+      <circle cx="100" cy="78" r="24" fill="currentColor"/>
+      <!-- Beak -->
+      <polygon points="124,76 136,80 124,84" fill="currentColor"/>
+      <!-- Comb -->
+      <path d="M90,55 Q94,44 100,54 Q104,42 110,54 Q114,43 118,54 L118,62 L86,62 Z" fill="currentColor"/>
+      <!-- Wattle -->
+      <ellipse cx="118" cy="90" rx="6" ry="9" fill="currentColor"/>
+      <!-- Eye -->
+      <circle cx="106" cy="74" r="4" fill="#fff"/>
+      <circle cx="107" cy="74" r="2" fill="currentColor"/>
+      <!-- Wing hint -->
+      <path d="M65,110 Q78,125 100,118 Q80,135 62,120 Z" fill="currentColor" opacity=".5"/>
+      <!-- Tail feathers -->
+      <path d="M135,108 Q148,95 150,108 Q145,120 135,118 Z" fill="currentColor" opacity=".6"/>
+      <path d="M132,112 Q148,105 152,118 Q145,128 132,122 Z" fill="currentColor" opacity=".4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ─── WATERMARK SVG (BG elements, used on each slide) ─── -->
+<svg style="display:none">
+  <defs>
+    <symbol id="wm-chicken" viewBox="0 0 120 120">
+      <ellipse cx="60" cy="75" rx="28" ry="22" fill="currentColor"/>
+      <circle cx="60" cy="45" r="18" fill="currentColor"/>
+      <polygon points="78,43 90,47 78,51" fill="currentColor"/>
+      <path d="M52,28 Q56,18 60,27 Q63,17 68,27 Q71,18 74,27 L74,33 L50,33 Z" fill="currentColor"/>
+      <ellipse cx="76" cy="56" rx="5" ry="7" fill="currentColor"/>
+      <circle cx="65" cy="42" r="3" fill="white" opacity=".7"/>
+    </symbol>
+    <symbol id="wm-egg" viewBox="0 0 60 80">
+      <ellipse cx="30" cy="44" rx="22" ry="28" fill="currentColor"/>
+    </symbol>
+    <symbol id="wm-wheat" viewBox="0 0 40 80">
+      <line x1="20" y1="75" x2="20" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <ellipse cx="20" cy="30" rx="7" ry="12" fill="currentColor" transform="rotate(-25,20,30)"/>
+      <ellipse cx="20" cy="30" rx="7" ry="12" fill="currentColor" transform="rotate(25,20,30)"/>
+      <ellipse cx="20" cy="18" rx="6" ry="11" fill="currentColor"/>
+      <line x1="20" y1="55" x2="8" y2="42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="20" y1="55" x2="32" y2="42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="shell" id="shell">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 1 — COVER -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide active" id="s1" style="padding:0;background:var(--bg-slide);">
+    <!-- watermarks -->
+    <div class="wm">
+      <svg width="260" height="260" style="top:-30px;left:-40px;opacity:.04;color:var(--gd)"><use href="#wm-chicken"/></svg>
+      <svg width="180" height="240" style="bottom:20px;right:60px;opacity:.04;color:var(--gd)"><use href="#wm-egg"/></svg>
+      <svg width="120" height="240" style="top:10px;left:260px;opacity:.04;color:var(--gd)"><use href="#wm-wheat"/></svg>
+    </div>
+
+    <!-- TOP BAR (no heading here, full cover) -->
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="38" height="38" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">
+          تعاونية عسير لانتاج لحوم الدواجن
+          <span>Aseer Cooperative for Poultry Meat Production</span>
+        </div>
+      </div>
+      <div class="top-bar-tagline">2026</div>
+    </div>
+
+    <!-- COVER BODY -->
+    <div class="cover-inner">
+      <div class="cover-left">
+        <div class="c-tag">استراتيجية مؤسسية &nbsp;·&nbsp; 2026</div>
+        <h1 class="c-title">استراتيجية<br>التحول التشغيلي</h1>
+        <div class="c-accent"></div>
+        <div class="c-goal">
+          الهدف الاستراتيجي — الوصول إلى
+          <strong>550,000 طائر يومياً</strong>
+        </div>
+        <div style="margin-top:30px;font-size:14px;color:var(--tm);">النمو &nbsp;·&nbsp; الكفاءة &nbsp;·&nbsp; الاستدامة</div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-logo-big">
+          <svg width="140" height="140" color="rgba(255,255,255,0.9)"><use href="#osoul-logo"/></svg>
+        </div>
+        <div class="cover-stats">
+          <div class="cstat">
+            <div class="cstat-num">550,000</div>
+            <div class="cstat-lbl">طائر / يوم (مستهدف)</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-num">≤ 1.85</div>
+            <div class="cstat-lbl">معدل التحويل الغذائي FCR</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-num">&lt; 2%</div>
+            <div class="cstat-lbl">نسبة النفوق المستهدفة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — استراتيجية التحول التشغيلي 2026</span>
+      <span class="pg-num">1 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 2 — FLOWCHART : المنظومة المتكاملة -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s2" style="padding:0;">
+    <div class="wm">
+      <svg width="200" height="200" style="top:60px;right:-20px;opacity:.04;color:var(--gd)"><use href="#wm-chicken"/></svg>
+      <svg width="100" height="133" style="bottom:60px;left:30px;opacity:.04;color:var(--gd)"><use href="#wm-egg"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body" style="padding-bottom:75px;">
+      <div class="sh">
+        <h2 class="st">المنظومة المتكاملة</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <div class="flow-wrap">
+          <div class="fbox">
+            <div class="fbox-icon">🐣</div>
+            <div class="fbox-name">الفقاسات</div>
+            <div class="fbox-desc">إنتاج الكتاكيت<br>عالية الجودة</div>
+          </div>
+          <div class="farrow"><div class="fline"></div></div>
+          <div class="fbox">
+            <div class="fbox-icon">🌾</div>
+            <div class="fbox-name">المزارع</div>
+            <div class="fbox-desc">تربية وتسمين<br>وفق معايير FCR</div>
+          </div>
+          <div class="farrow"><div class="fline"></div></div>
+          <div class="fbox">
+            <div class="fbox-icon">🏭</div>
+            <div class="fbox-name">المسالخ</div>
+            <div class="fbox-desc">معالجة وتجهيز<br>بكفاءة تشغيلية</div>
+          </div>
+          <div class="farrow"><div class="fline"></div></div>
+          <div class="fbox">
+            <div class="fbox-icon">🛒</div>
+            <div class="fbox-name">المبيعات</div>
+            <div class="fbox-desc">توزيع وتسويق<br>بربحية مستدامة</div>
+          </div>
+        </div>
+        <!-- Mini bar chart showing capacity at each stage -->
+        <div style="margin-top:18px;">
+          <div style="font-size:12px;color:#888;text-align:center;margin-bottom:8px;font-family:'Cairo',sans-serif;">الطاقة الإنتاجية المستهدفة (ألف طائر/يوم)</div>
+          <div class="bar-chart-wrap" style="height:125px;align-items:flex-end;">
+            <div class="bar-col">
+              <div class="bar-val">600</div>
+              <div class="bar" style="height:65px;"></div>
+              <div class="bar-lbl">الفقاسات</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">580</div>
+              <div class="bar" style="height:62px;opacity:.85;"></div>
+              <div class="bar-lbl">المزارع</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">560</div>
+              <div class="bar" style="height:59px;opacity:.7;"></div>
+              <div class="bar-lbl">المسالخ</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">550</div>
+              <div class="bar" style="height:56px;opacity:.55;background:linear-gradient(to top,var(--gold),#e8c96a);"></div>
+              <div class="bar-lbl">المبيعات</div>
+            </div>
+          </div>
+          <div class="bar-axis"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">2 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 3 — EQUATION : معادلة النجاح -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s3" style="padding:0;">
+    <div class="wm">
+      <svg width="220" height="220" style="bottom:-30px;left:-30px;opacity:.05;color:var(--gd)"><use href="#wm-chicken"/></svg>
+      <svg width="120" height="160" style="top:30px;right:40px;opacity:.04;color:var(--gd)"><use href="#wm-wheat"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">معادلة النجاح</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <div class="focus-wrap">
+          <div class="feq">
+            كفاءة التشغيل
+            <span class="op">+</span>
+            جودة الإنتاج
+            <span class="op">=</span>
+            ربحية مستدامة
+          </div>
+          <div class="fnote">
+            كل قرار تشغيلي يؤثر مباشرة على
+            <strong>الهامش الربحي وقدرتنا التنافسية</strong>
+          </div>
+          <!-- Visual equation cards -->
+          <div style="display:flex;align-items:stretch;gap:0;direction:rtl;margin-top:14px;width:100%;max-width:700px;">
+            <div style="background:var(--wh);border:2px solid var(--gd);border-radius:16px 0 0 16px;padding:20px 24px;text-align:center;box-shadow:0 5px 20px rgba(58,79,44,.13);flex:1;">
+              <div style="font-size:34px;margin-bottom:10px;">⚙️</div>
+              <div style="font-size:18px;font-weight:900;color:var(--gd);font-family:'Cairo',sans-serif;margin-bottom:6px;">كفاءة التشغيل</div>
+              <div style="font-size:12px;color:#888;line-height:1.5;">تقليل الهدر<br>رفع الطاقة الإنتاجية</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;background:var(--gp2);padding:0 14px;font-size:34px;font-weight:900;color:var(--gll);flex-shrink:0;">+</div>
+            <div style="background:var(--wh);border:2px solid var(--gm);border-top:2px solid var(--gm);padding:20px 24px;text-align:center;box-shadow:0 5px 20px rgba(58,79,44,.13);flex:1;border-radius:0;">
+              <div style="font-size:34px;margin-bottom:10px;">⭐</div>
+              <div style="font-size:18px;font-weight:900;color:var(--gd);font-family:'Cairo',sans-serif;margin-bottom:6px;">جودة الإنتاج</div>
+              <div style="font-size:12px;color:#888;line-height:1.5;">المعايير الصحية<br>FCR المثالي</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;background:var(--gp2);padding:0 14px;font-size:34px;font-weight:900;color:var(--gll);flex-shrink:0;">=</div>
+            <div style="background:linear-gradient(135deg,var(--gd),var(--gm));border-radius:0 16px 16px 0;padding:20px 24px;text-align:center;box-shadow:0 5px 20px rgba(58,79,44,.25);flex:1;">
+              <div style="font-size:34px;margin-bottom:10px;">💰</div>
+              <div style="font-size:18px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;margin-bottom:6px;">ربحية مستدامة</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.5;">الهدف الاستراتيجي<br>التحول التشغيلي</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">3 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 4 — CRITICAL LINK : الربط الحاسم -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s4" style="padding:0;">
+    <div class="wm">
+      <svg width="160" height="213" style="top:30px;left:-20px;opacity:.04;color:var(--gd)"><use href="#wm-egg"/></svg>
+      <svg width="160" height="213" style="bottom:30px;right:10px;opacity:.04;color:var(--gd)"><use href="#wm-egg"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">الربط الحاسم — أثر الأرقام الصغيرة</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <div class="focus-wrap" style="gap:20px;">
+          <div class="savings-cards">
+            <div class="scard">
+              <div class="scard-icon">📊</div>
+              <div style="font-size:13px;color:#888;margin-bottom:6px;font-family:'Cairo',sans-serif;">تحسين FCR بمقدار</div>
+              <div class="scard-val">0.1</div>
+              <div style="font-size:20px;color:var(--gl);margin:8px 0;">↓</div>
+              <div class="scard-val" style="font-size:22px;color:var(--gm);">≈ 2.5 مليون ريال</div>
+              <div class="scard-lbl">توفير سنوي في تكلفة العلف</div>
+            </div>
+            <div class="scard">
+              <div class="scard-icon">🐓</div>
+              <div style="font-size:13px;color:#888;margin-bottom:6px;font-family:'Cairo',sans-serif;">خفض النفوق بنسبة</div>
+              <div class="scard-val">1%</div>
+              <div style="font-size:20px;color:var(--gl);margin:8px 0;">↓</div>
+              <div class="scard-val" style="font-size:22px;color:var(--gm);">5,500 طائر إضافي</div>
+              <div class="scard-lbl">طاقة إنتاجية إضافية يومياً</div>
+            </div>
+          </div>
+          <!-- comparison bar -->
+          <div style="width:100%;max-width:560px;">
+            <div style="font-size:13px;color:#888;margin-bottom:10px;text-align:center;font-family:'Cairo',sans-serif;">أثر التحسين التراكمي على الطاقة الإنتاجية</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="font-size:12px;width:80px;text-align:right;flex-shrink:0;font-family:'Cairo',sans-serif;color:#666;">الحالي</div>
+                <div style="flex:1;height:28px;background:var(--gp2);border-radius:6px;overflow:hidden;">
+                  <div style="width:65%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:6px;display:flex;align-items:center;padding-right:8px;">
+                    <span style="color:#fff;font-size:11px;font-family:'Cairo',sans-serif;font-weight:700;">357,500 طائر/يوم</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="font-size:12px;width:80px;text-align:right;flex-shrink:0;font-family:'Cairo',sans-serif;color:#666;">المستهدف</div>
+                <div style="flex:1;height:28px;background:var(--gp2);border-radius:6px;overflow:hidden;">
+                  <div style="width:100%;height:100%;background:linear-gradient(to right,var(--gold),#e8c96a);border-radius:6px;display:flex;align-items:center;padding-right:8px;">
+                    <span style="color:#3a4f2c;font-size:11px;font-family:'Cairo',sans-serif;font-weight:700;">550,000 طائر/يوم</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fnote"><strong>الأرقام الصغيرة تصنع الفوارق الكبيرة</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">4 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 5 — PHASES GRID -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s5" style="padding:0;">
+    <div class="wm">
+      <svg width="180" height="180" style="bottom:-10px;right:-10px;opacity:.04;color:var(--gd)"><use href="#wm-chicken"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">مراحل التنفيذ</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <!-- Timeline connector -->
+        <div style="display:flex;align-items:center;margin-bottom:6px;flex-shrink:0;">
+          <div style="flex:1;height:3px;background:linear-gradient(to left,var(--gll),var(--gd));border-radius:2px;position:relative;">
+            <div style="position:absolute;top:50%;left:0;transform:translateY(-50%);width:12px;height:12px;background:var(--gd);border-radius:50%;"></div>
+            <div style="position:absolute;top:50%;left:25%;transform:translate(-50%,-50%);width:12px;height:12px;background:var(--gd);border-radius:50%;"></div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:var(--gd);border-radius:50%;"></div>
+            <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:14px;height:14px;background:var(--gold);border-radius:50%;border:2px solid var(--gd);"></div>
+          </div>
+        </div>
+        <div class="grid4">
+          <div class="gblock">
+            <div class="ph-icon">🏗️</div>
+            <div class="ph-num">01</div>
+            <div class="lbl">المرحلة الأولى</div>
+            <div class="ttl">الاستقرار</div>
+            <div class="dsc">تثبيت العمليات الأساسية وضبط معايير الجودة في جميع المحطات</div>
+            <div class="mtr">Q1 2026</div>
+          </div>
+          <div class="gblock">
+            <div class="ph-icon">⚙️</div>
+            <div class="ph-num">02</div>
+            <div class="lbl">المرحلة الثانية</div>
+            <div class="ttl">الكفاءة</div>
+            <div class="dsc">تحسين مؤشر FCR وخفض النفوق إلى المستويات المستهدفة</div>
+            <div class="mtr">Q2 2026</div>
+          </div>
+          <div class="gblock">
+            <div class="ph-icon">📈</div>
+            <div class="ph-num">03</div>
+            <div class="lbl">المرحلة الثالثة</div>
+            <div class="ttl">التحسين</div>
+            <div class="dsc">رفع طاقة المسالخ وتطوير سلسلة التوزيع والبيع الميداني</div>
+            <div class="mtr">Q3 2026</div>
+          </div>
+          <div class="gblock" style="border-top-color:var(--gold);">
+            <div class="ph-icon">🚀</div>
+            <div class="ph-num" style="color:#e8d89a;">04</div>
+            <div class="lbl" style="color:var(--gold);">المرحلة الرابعة</div>
+            <div class="ttl">التوسع</div>
+            <div class="dsc">الوصول إلى الطاقة الكاملة: 550,000 طائر يومياً</div>
+            <div class="mtr" style="background:#fdf6e3;color:var(--gold);">Q4 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">5 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 6 — KPI GAUGES -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s6" style="padding:0;">
+    <div class="wm">
+      <svg width="200" height="267" style="top:40px;left:-30px;opacity:.04;color:var(--gd)"><use href="#wm-egg"/></svg>
+      <svg width="140" height="280" style="bottom:-10px;right:60px;opacity:.04;color:var(--gd)"><use href="#wm-wheat"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">لوحة القيادة — KPIs الرئيسية</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <div class="kpi-gauges">
+          <!-- KPI 1 -->
+          <div class="gauge-card">
+            <div class="gc-lbl">مؤشر رئيسي</div>
+            <div style="font-size:20px;">🐔</div>
+            <div class="gc-title">الإنتاجية</div>
+            <svg viewBox="0 0 80 45" width="60" height="34">
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
+            </svg>
+            <div class="gc-val">550,000</div>
+            <div class="gc-unit">طائر / يوم</div>
+            <div class="gc-desc">الطاقة الإنتاجية اليومية المستهدفة</div>
+          </div>
+          <!-- KPI 2 -->
+          <div class="gauge-card">
+            <div class="gc-lbl">مؤشر رئيسي</div>
+            <div style="font-size:20px;">📉</div>
+            <div class="gc-title">النفوق</div>
+            <svg viewBox="0 0 80 45" width="60" height="34">
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="30,200"/>
+            </svg>
+            <div class="gc-val">&lt; 2%</div>
+            <div class="gc-unit">يومياً</div>
+            <div class="gc-desc">الحد الأقصى المقبول لنسبة النفوق</div>
+          </div>
+          <!-- KPI 3 -->
+          <div class="gauge-card">
+            <div class="gc-lbl">مؤشر رئيسي</div>
+            <div style="font-size:20px;">🌾</div>
+            <div class="gc-title">FCR</div>
+            <svg viewBox="0 0 80 45" width="60" height="34">
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
+            </svg>
+            <div class="gc-val">≤ 1.85</div>
+            <div class="gc-unit">عبر دورة التربية</div>
+            <div class="gc-desc">معدل التحويل الغذائي</div>
+          </div>
+          <!-- KPI 4 -->
+          <div class="gauge-card">
+            <div class="gc-lbl">مؤشر رئيسي</div>
+            <div style="font-size:20px;">⚖️</div>
+            <div class="gc-title">الوزن</div>
+            <svg viewBox="0 0 80 45" width="60" height="34">
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
+            </svg>
+            <div class="gc-val">2.5 كجم</div>
+            <div class="gc-unit">عند الذبح</div>
+            <div class="gc-desc">الوزن المستهدف للطائر</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">6 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 7 — CHECKLIST -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s7" style="padding:0;">
+    <div class="wm">
+      <svg width="200" height="200" style="top:-20px;right:-20px;opacity:.04;color:var(--gd)"><use href="#wm-chicken"/></svg>
+      <svg width="100" height="133" style="bottom:40px;left:20px;opacity:.03;color:var(--gd)"><use href="#wm-egg"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body" style="padding-bottom:75px;">
+      <div class="sh">
+        <h2 class="st">المؤشرات الرئيسية للأداء</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb">
+        <ul class="cklist">
+          <li class="cki">
+            <div class="ckico">✔</div>
+            <div class="cktxt"><strong>نسبة النفوق</strong> — أقل من 2% يومياً في جميع المزارع والمحطات</div>
+          </li>
+          <li class="cki">
+            <div class="ckico">✔</div>
+            <div class="cktxt"><strong>معدل FCR</strong> — لا يتجاوز 1.85 عبر الدورة الكاملة للتربية</div>
+          </li>
+          <li class="cki">
+            <div class="ckico">✔</div>
+            <div class="cktxt"><strong>الوزن عند الذبح</strong> — 2.5 كجم ± 0.1 كجم للطائر الواحد</div>
+          </li>
+          <li class="cki">
+            <div class="ckico">✔</div>
+            <div class="cktxt"><strong>الطاقة الإنتاجية</strong> — 550,000 طائر يومياً عند اكتمال التوسع</div>
+          </li>
+        </ul>
+        <!-- Progress bars for each KPI -->
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:4px;font-family:'Cairo',sans-serif;">
+              <span>التقدم نحو الإنتاجية المستهدفة</span><span>65%</span>
+            </div>
+            <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
+              <div style="width:65%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:4px;font-family:'Cairo',sans-serif;">
+              <span>الامتثال لمعدل FCR المستهدف</span><span>78%</span>
+            </div>
+            <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
+              <div style="width:78%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:4px;font-family:'Cairo',sans-serif;">
+              <span>التحكم في نسبة النفوق</span><span>85%</span>
+            </div>
+            <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
+              <div style="width:85%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">7 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 8 — RESPONSIBILITIES + CHART -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s8" style="padding:0;">
+    <div class="wm">
+      <svg width="150" height="200" style="bottom:-20px;left:-10px;opacity:.04;color:var(--gd)"><use href="#wm-wheat"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">توزيع المسؤوليات</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb" style="flex-direction:row;gap:24px;overflow:hidden;">
+        <div style="flex:1;overflow:hidden;">
+          <table class="rtbl">
+            <thead>
+              <tr>
+                <th>القسم</th>
+                <th>المهمة الأساسية</th>
+                <th>النتيجة المستهدفة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="col-dept">التشغيل</td>
+                <td>إدارة المزارع والمسالخ بأقصى طاقتها الإنتاجية</td>
+                <td><span class="col-res">الكفاءة</span></td>
+              </tr>
+              <tr>
+                <td class="col-dept">الجودة</td>
+                <td>مراقبة مؤشرات الأداء وتطبيق المعايير التشغيلية</td>
+                <td><span class="col-res">الاتساق</span></td>
+              </tr>
+              <tr>
+                <td class="col-dept">المبيعات</td>
+                <td>توزيع الإنتاج وإدارة قنوات البيع والتسويق</td>
+                <td><span class="col-res">الإيراد</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Donut-like pie chart showing responsibility weight -->
+        <div style="width:200px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+          <svg viewBox="0 0 140 140" width="140" height="140">
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+            <!-- 40% التشغيل  -->
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#3a4f2c" stroke-width="20"
+              stroke-dasharray="138 207" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+            <!-- 35% الجودة -->
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#6b8c4e" stroke-width="20"
+              stroke-dasharray="121 224" stroke-dashoffset="-138" transform="rotate(-90 70 70)"/>
+            <!-- 25% المبيعات -->
+            <circle cx="70" cy="70" r="55" fill="none" stroke="#8aaa68" stroke-width="20"
+              stroke-dasharray="86 259" stroke-dashoffset="-259" transform="rotate(-90 70 70)"/>
+            <text x="70" y="66" text-anchor="middle" font-family="Cairo,sans-serif" font-size="12" fill="#3a4f2c" font-weight="700">توزيع</text>
+            <text x="70" y="82" text-anchor="middle" font-family="Cairo,sans-serif" font-size="12" fill="#3a4f2c" font-weight="700">الأدوار</text>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;font-family:'Cairo',sans-serif;">
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#3a4f2c;border-radius:2px;flex-shrink:0;"></div><span>التشغيل 40%</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#6b8c4e;border-radius:2px;flex-shrink:0;"></div><span>الجودة 35%</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;background:#8aaa68;border-radius:2px;flex-shrink:0;"></div><span>المبيعات 25%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — 2026</span>
+      <span class="pg-num">8 / 9</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 9 — FINAL -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s9" style="padding:0;">
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Meat Production</span></div>
+      </div>
+      <div class="top-bar-tagline">2026</div>
+    </div>
+    <div class="final-bg">
+      <!-- watermark chickens -->
+      <svg width="300" height="300" style="position:absolute;top:-40px;right:-40px;opacity:.07;color:#fff"><use href="#wm-chicken"/></svg>
+      <svg width="220" height="293" style="position:absolute;bottom:-30px;left:-30px;opacity:.06;color:#fff"><use href="#wm-egg"/></svg>
+      <svg width="160" height="320" style="position:absolute;bottom:20px;right:80px;opacity:.05;color:#fff"><use href="#wm-wheat"/></svg>
+
+      <div>
+        <svg width="80" height="80" color="rgba(255,255,255,0.8)" style="position:relative;z-index:2;"><use href="#osoul-logo"/></svg>
+      </div>
+      <div class="fhl">البيع بكفاءة<br>وربحية</div>
+      <div class="fl"></div>
+      <div class="fsub">هذا هو هدفنا — وهذا هو معيار نجاحنا</div>
+      <div style="display:flex;gap:20px;z-index:2;position:relative;">
+        <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 22px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;">550K</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.7);">طائر / يوم</div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 22px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;">1.85</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.7);">FCR مستهدف</div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 22px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;">2026</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.7);">سنة التحول</div>
+        </div>
+      </div>
+      <div class="fbrand">تعاونية عسير لانتاج لحوم الدواجن &nbsp;·&nbsp; استراتيجية التحول التشغيلي 2026</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV BAR -->
+<div class="nav-bar">
+  <button class="nbtn" id="bp" onclick="go(-1)" title="السابق">&#8592;</button>
+  <div class="ndots" id="dots"></div>
+  <span class="ncnt" id="cnt">1 / 9</span>
+  <button class="nbtn" id="bn" onclick="go(+1)" title="التالي">&#8594;</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total  = slides.length;
+  let cur = 0;
+
+  const dotsEl = document.getElementById('dots');
+  const cntEl  = document.getElementById('cnt');
+  const bp     = document.getElementById('bp');
+  const bn     = document.getElementById('bn');
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (idx === cur || idx < 0 || idx >= total) return;
+    const old = cur;
+    cur = idx;
+    slides[old].classList.remove('active');
+    slides[old].classList.add('exit');
+    setTimeout(() => slides[old].classList.remove('exit'), 460);
+    slides[cur].classList.add('active');
+    sync();
+  }
+
+  function go(dir) { goTo(cur + dir); }
+
+  function sync() {
+    document.querySelectorAll('.dot').forEach((d, i) =>
+      d.className = 'dot' + (i === cur ? ' on' : ''));
+    cntEl.textContent = (cur + 1) + ' / ' + total;
+    bp.disabled = cur === 0;
+    bn.disabled = cur === total - 1;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowDown')  go(+1);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp')    go(-1);
+  });
+
+  sync();
+</script>
+</body>
+</html>
