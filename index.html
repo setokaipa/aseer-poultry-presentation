@@ -562,28 +562,28 @@
     /* ─── NAV BAR ─── */
     .nav-bar {
       position: fixed;
-      bottom: 48px;
+      bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
       direction: ltr;
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: rgba(58,79,44,.92);
+      gap: 7px;
+      background: rgba(58,79,44,.88);
       backdrop-filter: blur(10px);
-      padding: 8px 18px;
-      border-radius: 40px;
-      box-shadow: 0 6px 28px rgba(0,0,0,.3);
+      padding: 5px 12px;
+      border-radius: 30px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.28);
       z-index: 999;
     }
     .nbtn {
-      width: 34px;
-      height: 34px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.5);
+      border: 1.5px solid rgba(255,255,255,.5);
       background: transparent;
       color: #fff;
-      font-size: 14px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -594,17 +594,17 @@
     }
     .nbtn:hover:not(:disabled) { background: rgba(255,255,255,.2); border-color: #fff; }
     .nbtn:disabled { border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.3); cursor: default; }
-    .ndots { display: flex; gap: 6px; align-items: center; }
+    .ndots { display: flex; gap: 4px; align-items: center; }
     .dot {
-      width: 7px;
-      height: 7px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: rgba(255,255,255,.35);
       cursor: pointer;
       transition: background .2s, transform .2s;
     }
     .dot.on { background: #fff; transform: scale(1.5); }
-    .ncnt { font-size: 11px; color: rgba(255,255,255,.6); min-width: 32px; text-align: center; font-family: 'Cairo', sans-serif; }
+    .ncnt { font-size: 9px; color: rgba(255,255,255,.6); min-width: 26px; text-align: center; font-family: 'Cairo', sans-serif; }
 
     /* ─── BAR CHART ─── */
     .bar-chart-wrap {
