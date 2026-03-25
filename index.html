@@ -514,7 +514,7 @@
 
     /* ─── TOP PROGRESS BAR ─── */
     #top-progress {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       right: 0;
@@ -531,7 +531,7 @@
 
     /* ─── FULLSCREEN BUTTON ─── */
     #fs-btn {
-      position: fixed;
+      position: absolute;
       top: 12px;
       left: 16px;
       width: 34px;
@@ -561,7 +561,7 @@
 
     /* ─── NAV BAR ─── */
     .nav-bar {
-      position: fixed;
+      position: absolute;
       bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
@@ -971,9 +971,9 @@
 
   /* Particles canvas */
   #particles-canvas {
-    position: fixed; inset: 0;
+    position: absolute; inset: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 5;
     opacity: 0;
     transition: opacity .6s;
   }
@@ -981,7 +981,7 @@
 
   /* Slide title toast */
   #slide-toast {
-    position: fixed;
+    position: absolute;
     top: 54px; left: 50%;
     transform: translateX(-50%) translateY(-14px);
     background: rgba(58,79,44,.92);
@@ -1001,7 +1001,7 @@
 
   /* Overview mode */
   #overview {
-    position: fixed; inset: 0;
+    position: absolute; inset: 0;
     background: rgba(20,30,14,.96);
     z-index: 2000;
     display: none;
@@ -1164,7 +1164,7 @@
 
   /* ─── AUTO-PLAY RING ─── */
   #ap-ring {
-    position: fixed; bottom: 100px; left: 50%;
+    position: absolute; bottom: 100px; left: 50%;
     transform: translateX(-50%);
     width: 42px; height: 42px;
     display: none; z-index: 999; pointer-events: none;
@@ -1174,7 +1174,7 @@
 
   /* ─── HELP MODAL ─── */
   #help-modal {
-    position: fixed; inset: 0;
+    position: absolute; inset: 0;
     background: rgba(8,14,6,.84);
     backdrop-filter: blur(14px);
     z-index: 3000;
@@ -1218,14 +1218,14 @@
 
   /* ─── CONFETTI ─── */
   #confetti-canvas {
-    position: fixed; inset: 0; pointer-events: none;
+    position: absolute; inset: 0; pointer-events: none;
     z-index: 4; opacity: 0; transition: opacity .5s;
   }
   #confetti-canvas.show { opacity: 1; }
 
   /* ─── PRESENTATION TIMER ─── */
   #pres-timer {
-    position: fixed; bottom: 52px; left: 18px;
+    position: absolute; bottom: 52px; left: 18px;
     background: rgba(58,79,44,.82);
     backdrop-filter: blur(8px);
     color: rgba(255,255,255,.75); font-family: 'Cairo', sans-serif;
@@ -1453,14 +1453,14 @@
 
   /* ─── SHARED FIXED TOP & BOTTOM BARS ─── */
   #shared-topbar {
-    position: fixed; top: 0; left: 0; right: 0;
+    position: absolute; top: 0; left: 0; right: 0;
     z-index: 200;
     background: var(--gd);
     display: flex; align-items: center; justify-content: flex-end;
     padding: 10px calc(280px + 20px) 10px 52px;
   }
   #shared-footer {
-    position: fixed; bottom: 0; left: 0; right: 0;
+    position: absolute; bottom: 0; left: 0; right: 0;
     z-index: 200;
     background: var(--gd);
     display: flex; align-items: center; justify-content: flex-end;
@@ -3142,8 +3142,6 @@
     </div>
   </div>
 
-</div>
-
 <!-- ─── SHARED FIXED TOP BAR ─── -->
 <div id="shared-topbar">
   <div class="top-bar-tagline">استراتيجية التحول التشغيلي 2026</div>
@@ -3275,13 +3273,15 @@
 </script>
 
 <!-- Particles canvas -->
-<canvas id="particles-canvas"></canvas>
+<canvas id="particles-canvas" width="1280" height="720"></canvas>
 
 <!-- Slide title toast -->
 <div id="slide-toast"></div>
 
 <!-- Overview mode -->
 <div id="overview"></div>
+
+</div><!-- /shell -->
 
 <script>
 /* ====== ENHANCEMENT SYSTEM ====== */
@@ -3537,11 +3537,6 @@ function scaleShell() {
   _shellEl.style.position = 'fixed';
   _shellEl.style.top  = Math.max(0, (vh - sh) / 2) + 'px';
   _shellEl.style.left = Math.max(0, (vw - sw) / 2) + 'px';
-  /* resize particle canvas to match real viewport */
-  if (typeof pCanvas !== 'undefined') {
-    pCanvas.width  = vw;
-    pCanvas.height = vh;
-  }
 }
 window.addEventListener('resize', scaleShell);
 scaleShell();
@@ -3578,7 +3573,7 @@ apRingEl.innerHTML = `<svg width="42" height="42" viewBox="0 0 42 42">
   <circle class="ap-fill" cx="21" cy="21" r="17" stroke="var(--gold)" stroke-width="3" fill="none"
     stroke-dasharray="106.8" stroke-dashoffset="106.8" stroke-linecap="round" style="transition:none;"/>
 </svg>`;
-document.body.appendChild(apRingEl);
+_shellEl.appendChild(apRingEl);
 
 function startApCountdown() {
   if (!apActive) return;
@@ -3628,7 +3623,7 @@ helpModal.innerHTML = `<div class="help-box">
   <button class="help-close-btn" onclick="toggleHelp()">إغلاق</button>
 </div>`;
 helpModal.addEventListener('click', e => { if (e.target === helpModal) toggleHelp(); });
-document.body.appendChild(helpModal);
+_shellEl.appendChild(helpModal);
 
 function toggleHelp() { helpModal.classList.toggle('open'); }
 
@@ -3642,7 +3637,7 @@ document.addEventListener('keydown', e => {
 /* ── Presentation timer ── */
 const timerEl = document.createElement('div');
 timerEl.id = 'pres-timer';
-document.body.appendChild(timerEl);
+_shellEl.appendChild(timerEl);
 const presStart = Date.now();
 function tickTimer() {
   const s = Math.floor((Date.now() - presStart) / 1000);
@@ -3654,13 +3649,12 @@ setInterval(tickTimer, 1000);
 /* ── Confetti (final slide s9) ── */
 const confCanvas = document.createElement('canvas');
 confCanvas.id = 'confetti-canvas';
-document.body.appendChild(confCanvas);
+_shellEl.appendChild(confCanvas);
 const confCtx = confCanvas.getContext('2d');
 let confActive = false, confRAF = null, confParts = [];
 
-function resizeConf() { confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
+function resizeConf() { confCanvas.width = 1280; confCanvas.height = 720; }
 resizeConf();
-window.addEventListener('resize', resizeConf);
 
 const CONF_COLORS = ['#c9a84c', '#8aaa68', '#fff', '#6b8c4e', '#f0f4ea', '#3a4f2c', '#d4ddc8'];
 
