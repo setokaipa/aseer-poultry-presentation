@@ -27,7 +27,7 @@
     body {
       font-family: 'Cairo', 'Tahoma', Arial, sans-serif;
       direction: rtl;
-      background: #2d3a20;
+      background: #111;
       height: 100vh;
       overflow: hidden;
       line-height: 1.4;
@@ -1301,123 +1301,149 @@
   #s1 .cover-left { padding-right: 300px; }
 
   /* ─── EXECUTIVE TWEET OPENING SLIDE ─── */
-  #s_tweet { background: #f5f8f0; }
-  .ts-wrap {
-    flex: 1; display: flex; overflow: hidden; direction: rtl;
+  #s_tweet { background: linear-gradient(135deg, #070f04 0%, #101c08 45%, #0b1506 100%); }
+
+  /* Two-column wrap: photo LEFT, content RIGHT */
+  .tsn-wrap { flex: 1; display: flex; direction: ltr; overflow: hidden; }
+
+  /* ── Photo panel (LEFT ~42%) ── */
+  .tsn-photo {
+    width: 42%; flex-shrink: 0; position: relative; overflow: hidden;
   }
-  /* CEO column — visual RIGHT (1st child in RTL flex after reorder) */
-  .ts-ceo-col {
-    width: 280px; flex-shrink: 0;
-    background: linear-gradient(175deg, var(--gd) 0%, #1b2910 100%);
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 28px 18px; gap: 13px;
+  .tsn-photo > img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+  }
+  /* Warm golden radiance on photo */
+  .tsn-photo::before {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(ellipse at 35% 35%, rgba(201,168,76,.15) 0%, transparent 62%);
+  }
+  /* Right-edge fade into dark background */
+  .tsn-photo::after {
+    content: ''; position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(to right,
+      rgba(7,15,4,.04) 0%,
+      rgba(7,15,4,.12) 55%,
+      rgba(7,15,4,.88) 85%,
+      rgba(7,15,4,.97) 100%);
+  }
+  /* Golden vertical accent line at the right edge */
+  .tsn-photo-accent {
+    position: absolute; top: 6%; bottom: 6%; right: 0; width: 2px; z-index: 4;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(201,168,76,.55) 20%,
+      var(--gold) 50%,
+      rgba(201,168,76,.55) 80%,
+      transparent 100%);
+  }
+  /* Decorative golden corner marks */
+  .tsn-photo-corner {
+    position: absolute; z-index: 4; width: 22px; height: 22px;
+    border-color: rgba(201,168,76,.6); border-style: solid;
+  }
+  .tsn-photo-corner.tl { top: 14px; left: 14px; border-width: 2px 0 0 2px; }
+  .tsn-photo-corner.br { bottom: 65px; left: 14px; border-width: 0 0 2px 2px; }
+  /* Doctor nameplate overlay at photo bottom */
+  .tsn-nameplate {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
+    padding: 32px 16px 13px;
+    background: linear-gradient(to top, rgba(7,15,4,.98) 0%, rgba(7,15,4,.82) 50%, transparent 100%);
+    text-align: center; direction: rtl;
+  }
+  .tsn-nameplate-name {
+    font-family: 'Cairo', sans-serif; font-size: 13.5px; font-weight: 700;
+    color: #fff; line-height: 1.45; letter-spacing: .3px;
+  }
+  .tsn-nameplate-badge {
+    display: inline-block; margin-top: 5px;
+    background: rgba(201,168,76,.18); border: 1px solid rgba(201,168,76,.55);
+    border-radius: 20px; padding: 2px 16px;
+    color: var(--gold); font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: .4px;
+  }
+
+  /* ── Content panel (RIGHT ~58%) ── */
+  .tsn-content {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding: 26px 52px 22px 32px; direction: rtl; gap: 8px;
     position: relative; overflow: hidden;
   }
-  .ts-ceo-col::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  /* Subtle cross-hatch texture */
+  .tsn-content::before {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.022'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
-  .ts-ceo-col::after {
-    content: '';
-    position: absolute; top: 0; right: 0; bottom: 0; width: 1px;
-    background: linear-gradient(to bottom, transparent, rgba(201,168,76,.3) 30%, rgba(201,168,76,.3) 70%, transparent);
+  .tsn-content > * { position: relative; z-index: 2; }
+
+  /* Brand strip at top of content */
+  .tsn-brand {
+    display: flex; align-items: center; gap: 10px; direction: rtl; margin-bottom: 2px;
   }
-  .ts-osoul-block { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .ts-osoul-name  { color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; text-align: center; }
-  .ts-osoul-sub   { color: rgba(255,255,255,.45); font-size: 9px; letter-spacing: 1.5px; }
-  .ts-ceo-divider {
-    position: relative; z-index: 2; width: 65%; height: 1px;
-    background: linear-gradient(to right, transparent, rgba(201,168,76,.45), transparent);
+  .tsn-brand-name {
+    font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700;
+    color: rgba(255,255,255,.88);
   }
-  .ts-photo-ring {
-    position: relative; z-index: 2;
-    width: 148px; height: 148px; border-radius: 50%; flex-shrink: 0;
-    padding: 3px;
-    background: linear-gradient(135deg, var(--gold) 0%, rgba(201,168,76,.25) 100%);
-    box-shadow: 0 0 0 7px rgba(201,168,76,.12), 0 14px 44px rgba(0,0,0,.45);
-  }
-  .ts-photo-ring img {
-    width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
-  }
-  .ts-ceo-info    { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .ts-ceo-name-lbl{ color: #fff; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; text-align: center; line-height: 1.4; }
-  .ts-ceo-badge   {
-    background: rgba(201,168,76,.2); border: 1px solid rgba(201,168,76,.5);
-    border-radius: 20px; padding: 3px 14px; color: var(--gold);
-    font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 600;
-  }
-  /* Quote column — visual LEFT (2nd child in RTL flex after reorder) */
-  .ts-quote-col {
-    flex: 1; display: flex; flex-direction: column; justify-content: center;
-    padding: 28px 44px 28px 52px; position: relative; overflow: hidden; gap: 9px;
-    border-right: 3px solid var(--gold);
-    background: linear-gradient(145deg, #ffffff 0%, #f8faf4 100%);
-  }
+  .tsn-brand-sub { font-size: 8.5px; color: rgba(255,255,255,.32); letter-spacing: 2px; margin-top: 2px; }
+
+  /* Twitter/X badge */
   .ts-tweet-badge { display: flex; align-items: center; gap: 10px; direction: rtl; }
   .ts-x-icon {
     width: 28px; height: 28px; background: #000; border-radius: 7px;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.5);
   }
-  .ts-tweet-label { font-size: 11px; color: var(--tm); font-weight: 600; }
+  .ts-tweet-label { font-size: 11px; color: rgba(255,255,255,.48); font-weight: 600; }
+
+  /* Giant decorative quote mark */
   .ts-qqm {
-    font-size: 76px; line-height: .6; color: var(--gold); opacity: .45;
+    font-size: 80px; line-height: .55; color: var(--gold); opacity: .42;
     font-family: Georgia, serif; text-align: right; user-select: none;
+    margin-bottom: -4px;
   }
+  /* Quote body */
   .ts-quote-body  { display: flex; flex-direction: column; gap: 7px; }
-  .ts-qt-para     { font-family: 'Cairo', sans-serif; font-size: 13.5px; color: var(--tb); line-height: 1.85; text-align: right; direction: rtl; margin: 0; }
-  .ts-qt-para strong { color: var(--gd); font-weight: 700; }
-  .ts-rule-sep    { text-align: center; color: var(--gold); font-size: 12px; opacity: .55; }
-  .ts-qt-highlight {
-    background: linear-gradient(135deg, var(--gd) 0%, var(--gm) 100%);
-    border-radius: 10px; padding: 12px 18px;
-    color: #fff; font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 700;
-    text-align: center; direction: rtl;
-    box-shadow: 0 4px 18px rgba(58,79,44,.22);
-    border-right: 4px solid var(--gold);
+  .ts-qt-para {
+    font-family: 'Cairo', sans-serif; font-size: 13.5px;
+    color: rgba(255,255,255,.84); line-height: 1.88; text-align: right;
+    direction: rtl; margin: 0;
   }
-  .ts-qt-closing  { font-size: 12.5px; color: var(--tm); direction: rtl; text-align: right; margin: 0; font-family: 'Cairo', sans-serif; }
-  .ts-qt-closing em { font-style: normal; font-weight: 700; color: var(--gd); }
+  .ts-qt-para strong { color: var(--gold); font-weight: 800; }
+  .ts-rule-sep    { text-align: center; color: var(--gold); font-size: 13px; opacity: .65; }
+  .ts-qt-highlight {
+    background: linear-gradient(135deg, rgba(201,168,76,.16) 0%, rgba(201,168,76,.08) 100%);
+    border: 1px solid rgba(201,168,76,.4);
+    border-right: 4px solid var(--gold);
+    border-radius: 10px; padding: 12px 18px;
+    color: #e8d58a; font-family: 'Cairo', sans-serif; font-size: 14.5px; font-weight: 700;
+    text-align: center; direction: rtl;
+    box-shadow: 0 4px 22px rgba(201,168,76,.13);
+    letter-spacing: .3px;
+  }
+  .ts-qt-closing {
+    font-size: 12.5px; color: rgba(255,255,255,.48); direction: rtl;
+    text-align: right; margin: 0; font-family: 'Cairo', sans-serif;
+  }
+  .ts-qt-closing em { font-style: normal; font-weight: 700; color: rgba(201,168,76,.85); }
+
+  /* Signature */
   .ts-sig {
     display: flex; align-items: center; gap: 10px; direction: rtl;
-    padding-top: 10px; border-top: 1px solid var(--br);
+    padding-top: 9px; border-top: 1px solid rgba(255,255,255,.1);
+    margin-top: 2px;
   }
-  .ts-sig-avatar  { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); flex-shrink: 0; }
-  .ts-sig-name    { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; color: var(--gd); }
-  .ts-sig-title   { font-size: 10px; color: var(--tm); }
-  /* Tweet slide: no persistent sidebar, reset footer padding */
-  #s_tweet .sf    { padding: 8px 52px; }
-  /* Hide persistent sidebar on the tweet/intro slide */
+  .ts-sig-name  { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9); }
+  .ts-sig-title { font-size: 10px; color: rgba(255,255,255,.45); }
+
+  /* Tweet slide footer & sidebar */
+  #s_tweet .sf   { padding: 8px 52px; }
   .shell:has(#s_tweet.active) #pside { display: none; }
 
-  /* ─── INTRO SLIDE DARK THEME ─── */
-  #s_tweet { background: linear-gradient(135deg, #0d1a07 0%, #192c0e 45%, #111f09 100%); }
-  #s_tweet .ts-quote-col {
-    background: linear-gradient(160deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.02) 100%);
-    border-right-color: rgba(201,168,76,.55);
-  }
-  #s_tweet .ts-qt-para { color: rgba(255,255,255,.86); }
-  #s_tweet .ts-qt-para strong { color: #c9a84c; font-weight: 800; }
-  #s_tweet .ts-tweet-label { color: rgba(255,255,255,.5); }
-  #s_tweet .ts-qqm { color: var(--gold); opacity: .5; }
-  #s_tweet .ts-rule-sep { color: var(--gold); opacity: .7; }
-  #s_tweet .ts-qt-highlight {
-    background: linear-gradient(135deg, rgba(201,168,76,.18) 0%, rgba(201,168,76,.1) 100%);
-    border: 1px solid rgba(201,168,76,.45);
-    border-right: 4px solid var(--gold);
-    color: #e8d08a;
-    box-shadow: 0 4px 20px rgba(201,168,76,.12);
-  }
-  #s_tweet .ts-qt-closing { color: rgba(255,255,255,.5); }
-  #s_tweet .ts-qt-closing em { color: #c9a84c; }
-  #s_tweet .ts-sig { border-top-color: rgba(255,255,255,.12); }
-  #s_tweet .ts-sig-name { color: rgba(255,255,255,.92); }
-  #s_tweet .ts-sig-title { color: rgba(255,255,255,.5); }
-  /* Intro slide exit animation for CEO column */
-  .ts-ceo-col { transition: transform .6s cubic-bezier(.4,0,1,1), opacity .55s ease; }
-  .ts-ceo-col.ts-col-exit { transform: translateX(110%) !important; opacity: 0 !important; }
-  .ts-quote-col { transition: opacity .45s ease, transform .45s ease; }
-  .ts-quote-col.ts-quote-exit { opacity: 0 !important; transform: scale(0.96) translateX(-20px) !important; }
+  /* Exit animations */
+  .tsn-photo { transition: transform .65s cubic-bezier(.4,0,1,1), opacity .55s ease; }
+  .tsn-photo.tsn-photo-exit { transform: translateX(-110%) !important; opacity: 0 !important; }
+  .tsn-content { transition: opacity .45s ease, transform .45s ease; }
+  .tsn-content.tsn-content-exit { opacity: 0 !important; transform: scale(0.96) translateX(22px) !important; }
   /* Shared bars visibility */
   body.on-intro #shared-topbar,
   body.on-intro #shared-footer { opacity: 0; pointer-events: none; }
@@ -1546,37 +1572,33 @@
   <!-- ══════════════════════════════════════════ -->
   <div class="slide active" id="s_tweet" style="padding:0;">
 
-    <div class="ts-wrap">
+    <div class="tsn-wrap">
 
-      <!-- VISUAL RIGHT (1st in RTL flex): صورة المدير والشعار -->
-      <div class="ts-ceo-col">
-        <div class="ts-osoul-block">
-          <img src="img/log.png" width="96" height="96" style="filter:brightness(0)invert(1) sepia(15%);opacity:0.9;display:block;object-fit:contain;position:relative;z-index:2;">
-          <div class="ts-osoul-name">دواجن أصول</div>
-          <div class="ts-osoul-sub">OSOUL POULTRY</div>
-        </div>
-
-        <div class="ts-ceo-divider"></div>
-
-        <div class="ts-photo-ring">
-          <img src="img/kedman.jpg" alt="د. عبدالله السرحاني">
-        </div>
-
-        <div class="ts-ceo-info">
-          <div class="ts-ceo-name-lbl">د. عبدالله بن كدمان<br>السرحاني</div>
-          <div class="ts-ceo-badge">الرئيس التنفيذي</div>
-        </div>
-
-        <div class="ts-ceo-divider"></div>
-
-        <div style="position:relative;z-index:2;text-align:center;">
-          <img src="img/logo.png" width="38" height="38" style="filter:brightness(0)invert(1);opacity:0.4;display:inline-block;object-fit:contain;">
-          <div style="color:rgba(255,255,255,.35);font-size:8px;margin-top:3px;font-family:'Cairo',sans-serif;letter-spacing:1px;">تعاونية عسير</div>
+      <!-- LEFT: Doctor's full-bleed photo -->
+      <div class="tsn-photo">
+        <img src="img/kedman-002.jpg" alt="د. عبدالله السرحاني">
+        <div class="tsn-photo-accent"></div>
+        <div class="tsn-photo-corner tl"></div>
+        <div class="tsn-photo-corner br"></div>
+        <div class="tsn-nameplate">
+          <div class="tsn-nameplate-name">د. عبدالله بن كدمان السرحاني</div>
+          <div class="tsn-nameplate-badge">الرئيس التنفيذي</div>
         </div>
       </div>
 
-      <!-- VISUAL LEFT (2nd in RTL flex): نص التغريدة -->
-      <div class="ts-quote-col">
+      <!-- RIGHT: Quote content -->
+      <div class="tsn-content">
+
+        <!-- Brand identity -->
+        <div class="tsn-brand">
+          <img src="img/log.png" width="36" height="36" style="filter:brightness(0)invert(1) sepia(15%);opacity:.88;display:block;object-fit:contain;flex-shrink:0;">
+          <div>
+            <div class="tsn-brand-name">دواجن أصول</div>
+            <div class="tsn-brand-sub">OSOUL POULTRY</div>
+          </div>
+        </div>
+
+        <!-- Twitter/X badge -->
         <div class="ts-tweet-badge">
           <div class="ts-x-icon">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -1584,8 +1606,10 @@
           <span class="ts-tweet-label">رؤية قيادية &nbsp;·&nbsp; تغريدة الرئيس التنفيذي</span>
         </div>
 
+        <!-- Decorative quote mark -->
         <div class="ts-qqm">"</div>
 
+        <!-- Quote text -->
         <div class="ts-quote-body">
           <p class="ts-qt-para">في تجاربي تعلّمت أن الاستراتيجية لا تُقاس بجمال العرض… بل <strong>بقدرتها على التحول إلى أرقام تُدار يوميًا.</strong></p>
           <p class="ts-qt-para">عملنا اليوم في تعاونية عسير على مراجعة الأرقام والتواريخ والمستهدفات، وأدركت أن النجاح الحقيقي لا يأتي من التخطيط فقط، بل من وضوح المنظومة كاملة: إنتاج مرتبط بالبيع، وبيع مدعوم بالطلب، وطلب يصنعه تسويق واعٍ.</p>
@@ -1596,16 +1620,17 @@
           <p class="ts-qt-closing">وفي التجربة الأعمق: <em>الأرقام الصغيرة تصنع الفارق الكبير…</em> وتحويل العمل إلى لغة أرقام هو بداية التحكم الحقيقي.</p>
         </div>
 
+        <!-- Signature -->
         <div class="ts-sig">
-          <img src="img/kedman.jpg" class="ts-sig-avatar" alt="">
           <div>
             <div class="ts-sig-name">د. عبدالله بن كدمان السرحاني</div>
             <div class="ts-sig-title">الرئيس التنفيذي — تعاونية عسير لانتاج لحوم الدواجن</div>
           </div>
         </div>
-      </div>
 
-    </div><!-- /ts-wrap -->
+      </div><!-- /tsn-content -->
+
+    </div><!-- /tsn-wrap -->
 
     <div class="sf">
       <span>تعاونية عسير لانتاج لحوم الدواجن — استراتيجية التحول التشغيلي 2026</span>
@@ -3470,17 +3495,17 @@ goTo = function(idx) {
   // Special intro exit animation
   if (cur === 0 && idx > 0) {
     const introSlide = slides[0];
-    const ceoEl = introSlide.querySelector('.ts-ceo-col');
-    const quoteEl = introSlide.querySelector('.ts-quote-col');
-    if (ceoEl) ceoEl.classList.add('ts-col-exit');
-    if (quoteEl) quoteEl.classList.add('ts-quote-exit');
+    const photoEl   = introSlide.querySelector('.tsn-photo');
+    const contentEl = introSlide.querySelector('.tsn-content');
+    if (photoEl)   photoEl.classList.add('tsn-photo-exit');
+    if (contentEl) contentEl.classList.add('tsn-content-exit');
     document.body.classList.remove('going-back');
     setTimeout(() => {
       _goToOrig(idx);
       runSlideAnimations(idx);
       setTimeout(() => {
-        if (ceoEl) ceoEl.classList.remove('ts-col-exit');
-        if (quoteEl) quoteEl.classList.remove('ts-quote-exit');
+        if (photoEl)   photoEl.classList.remove('tsn-photo-exit');
+        if (contentEl) contentEl.classList.remove('tsn-content-exit');
       }, 700);
     }, 320);
     return;
@@ -3495,6 +3520,31 @@ goTo = function(idx) {
 
 /* Kick off particles if starting on a particle slide */
 if (slides[0] && PARTICLE_SLIDES.includes(slides[0].id)) startParticles();
+
+/* ── Viewport scale — makes the presentation fill any screen proportionally ──
+   Base design is 1280 × 720. On a 4K / large display this scales everything
+   up so no text is invisible. On the PDF (viewport = 1280 × 720) scale = 1.  */
+const _shellEl = document.querySelector('.shell');
+function scaleShell() {
+  const BASE_W = 1280, BASE_H = 720;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const scale = Math.min(vw / BASE_W, vh / BASE_H);
+  const sw = BASE_W * scale, sh = BASE_H * scale;
+  _shellEl.style.width  = BASE_W + 'px';
+  _shellEl.style.height = BASE_H + 'px';
+  _shellEl.style.transform = 'scale(' + scale + ')';
+  _shellEl.style.transformOrigin = 'top left';
+  _shellEl.style.position = 'fixed';
+  _shellEl.style.top  = Math.max(0, (vh - sh) / 2) + 'px';
+  _shellEl.style.left = Math.max(0, (vw - sw) / 2) + 'px';
+  /* resize particle canvas to match real viewport */
+  if (typeof pCanvas !== 'undefined') {
+    pCanvas.width  = vw;
+    pCanvas.height = vh;
+  }
+}
+window.addEventListener('resize', scaleShell);
+scaleShell();
 
 /* Run entrance animations on first slide */
 (function() {
