@@ -59,13 +59,13 @@
       flex-direction: column;
       padding: 0;
       opacity: 0;
-      transform: translateY(28px);
-      transition: opacity .42s ease, transform .42s ease;
       pointer-events: none;
       overflow: hidden;
+      transition: opacity .14s ease;
+      z-index: 0;
     }
-    .slide.active { opacity: 1; transform: translateY(0); pointer-events: all; }
-    .slide.exit   { opacity: 0; transform: translateY(-28px); }
+    .slide.active { opacity: 1; pointer-events: all; z-index: 2; }
+    .slide.exit   { opacity: 0; pointer-events: none; z-index: 1; }
 
     /* ─── TOP BAR (logo strip) ─── */
     .top-bar {
@@ -74,7 +74,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 52px 10px 52px;
+      padding: 10px 300px 10px 52px;
       background: var(--gd);
       flex-shrink: 0;
     }
@@ -99,14 +99,28 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 28px 52px 10px;
+      padding: 28px 300px 10px 52px;
       position: relative;
       z-index: 5;
       overflow: hidden;
+      transform: translateY(26px);
+      opacity: 0;
+      transition: transform .58s .06s cubic-bezier(.22,1,.36,1), opacity .5s .06s cubic-bezier(.4,0,.2,1);
     }
+    .slide.active .slide-body { transform: translateY(0); opacity: 1; }
+    .slide.exit .slide-body   { transform: translateY(-18px); opacity: 0;
+      transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .25s; }
+    body.going-back .slide:not(.active):not(.exit) .slide-body { transform: translateY(-26px); }
+    body.going-back .slide.exit .slide-body { transform: translateY(18px) !important; }
+    /* Heading slides in from the start side */
+    .sh { margin-bottom: 18px; flex-shrink: 0; transform: translateX(18px); opacity: 0;
+      transition: transform .5s .22s cubic-bezier(.22,1,.36,1), opacity .45s .22s; }
+    .slide.active .sh { transform: translateX(0); opacity: 1; }
+    .slide.exit .sh { transform: translateX(18px); opacity: 0;
+      transition: transform .25s, opacity .2s; }
+    body.going-back .slide:not(.active):not(.exit) .sh { transform: translateX(-18px); }
 
     /* ─── HEADING ─── */
-    .sh { margin-bottom: 18px; flex-shrink: 0; }
     .st {
       font-family: 'Cairo', sans-serif;
       font-weight: 900;
@@ -118,7 +132,7 @@
     }
     .sr {
       height: 3px;
-      background: linear-gradient(to left, var(--gd) 0%, var(--gll) 60%, transparent 100%);
+      background: linear-gradient(to left, var(--gd) 0%, var(--gll) 45%, var(--gold) 75%, transparent 100%);
       border-radius: 2px;
     }
     .sb { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -126,7 +140,7 @@
     /* ─── FOOTER ─── */
     .sf {
       flex-shrink: 0;
-      padding: 8px 52px;
+      padding: 8px 300px 8px 52px;
       background: var(--gd);
       display: flex;
       justify-content: space-between;
@@ -231,7 +245,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      direction: ltr;
+      direction: rtl;
       gap: 0;
       padding-bottom: 10px;
     }
@@ -261,15 +275,15 @@
     .fline {
       width: 50px;
       height: 2px;
-      background: linear-gradient(to right, var(--gll), var(--gl));
+      background: linear-gradient(to left, var(--gll), var(--gl));
       position: relative;
     }
     .fline::after {
       content: '';
       position: absolute;
-      right: -8px;
+      left: -8px;
       top: 50%;
-      transform: translateY(-50%) rotate(45deg);
+      transform: translateY(-50%) rotate(225deg);
       width: 9px;
       height: 9px;
       border-top: 2px solid var(--gl);
@@ -544,7 +558,7 @@
     /* ─── NAV BAR ─── */
     .nav-bar {
       position: fixed;
-      bottom: 22px;
+      bottom: 48px;
       left: 50%;
       transform: translateX(-50%);
       direction: ltr;
@@ -678,13 +692,799 @@
       margin-top: 1px;
     }
     .gauge-card .gc-unit { font-size: 11px; color: #888; }
+  /* Enhanced gauge card design */
+  .gauge-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 5px 22px rgba(58,79,44,.12), 0 0 0 1px rgba(58,79,44,.05);
+    gap: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .22s ease, box-shadow .22s ease;
+  }
+  .gauge-card:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(58,79,44,.22), 0 0 0 1px rgba(58,79,44,.08); }
+  .gauge-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--gd), var(--gll));
+  }
+  .gc-arc-svg { display: block; overflow: visible; }
+  /* Digital model card */
+  .dmodel-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 5px 22px rgba(58,79,44,.12), 0 0 0 1px rgba(58,79,44,.05);
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    width: 100%;
+    transition: transform .22s ease, box-shadow .22s ease;
+  }
+  .dmodel-card:hover { transform: translateX(-4px); box-shadow: 0 12px 32px rgba(58,79,44,.2), 0 0 0 1px rgba(58,79,44,.08); }
+  .dmc-header {
+    padding: 14px 16px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    width: 210px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .dmc-header::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 8px,
+      rgba(255,255,255,.03) 8px, rgba(255,255,255,.03) 16px
+    );
+  }
+  .dmc-icon { font-size: 22px; margin-bottom: 5px; position: relative; z-index: 1; }
+  .dmc-label {
+    font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,.85); margin-bottom: 5px; position: relative; z-index: 1;
+  }
+  .dmc-formula {
+    font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 600;
+    color: rgba(255,255,255,.95);
+    background: rgba(0,0,0,.22);
+    padding: 4px 8px; border-radius: 5px;
+    direction: rtl; text-align: right; line-height: 1.5;
+    position: relative; z-index: 1;
+  }
+  .dmc-body { flex: 1; padding: 10px 16px; display: flex; flex-direction: row; gap: 10px; align-items: stretch; }
+  .dmc-row {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6px 10px; background: var(--gp); border-radius: 8px;
+    font-family: 'Cairo', sans-serif; font-size: 9.5px; gap: 4px; text-align: center;
+  }
+  .dmc-key { color: #999; font-size: 9px; }
+  .dmc-val { font-weight: 800; color: var(--gd); font-size: 13px; }
+  .dmc-val-ok { font-weight: 700; color: #2e7d32; background: #e8f5e9; padding: 2px 7px; border-radius: 8px; font-size: 11px; }
+  .dmc-divider { width: 1px; height: auto; align-self: stretch; background: var(--br); margin: 0 2px; }
+  .dmc-result {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 8px 10px; background: var(--gd); border-radius: 8px; margin-top: 0;
+  }
+  .dmc-res-label { font-size: 9px; color: rgba(255,255,255,.65); font-family: 'Cairo', sans-serif; }
+  .dmc-res-val { font-size: 18px; font-weight: 900; color: #fff; font-family: 'Cairo', sans-serif; }
+  .dmc-res-unit { font-size: 10px; color: rgba(255,255,255,.7); font-family: 'Cairo', sans-serif; }
+  .dmc-status-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px; border: 1.5px solid transparent; flex: 1;
+  }
+  .dmc-red  { background: #fff5f5; border-color: #ffd0d0; }
+  .dmc-green { background: #f0f9f2; border-color: #b8e8c0; }
+  .dmc-gold { background: #fffbee; border-color: #f0e0a0; }
+  .dmc-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .dmc-red  .dmc-status-dot { background: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.18); animation: dmcPulse 2s ease-in-out infinite; }
+  .dmc-green .dmc-status-dot { background: #27ae60; box-shadow: 0 0 0 3px rgba(39,174,96,.18); animation: dmcPulse 2.4s ease-in-out infinite; }
+  .dmc-gold .dmc-status-dot { background: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,.18); animation: dmcPulse 2.8s ease-in-out infinite; }
+  .dmc-status-info { display: flex; flex-direction: column; gap: 1px; }
+  .dmc-status-val { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 900; color: var(--tb); }
+  .dmc-status-lbl { font-family: 'Cairo', sans-serif; font-size: 10px; color: #888; }
+  .dmc-lever {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; background: var(--gp); border-radius: 8px; flex: 1;
+  }
+  .dmc-lever-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; color: #fff;
+  }
+  .dmc-lever-text { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; color: var(--gd); flex: 1; }
+  .dmc-lever-effect { font-size: 10px; color: var(--gl); font-family: 'Cairo', sans-serif; font-weight: 600; white-space: nowrap; }
+  @keyframes dmcPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(0,0,0,.15); }
+    50% { box-shadow: 0 0 0 7px rgba(0,0,0,.05); }
+  }
+  .dmc-red  .dmc-status-dot { animation: dmcPulseRed 2s ease-in-out infinite; }
+  .dmc-green .dmc-status-dot { animation: dmcPulseGreen 2.4s ease-in-out infinite; }
+  .dmc-gold .dmc-status-dot { animation: dmcPulseGold 2.8s ease-in-out infinite; }
+  @keyframes dmcPulseRed   { 0%,100%{box-shadow:0 0 0 3px rgba(192,57,43,.2);}  50%{box-shadow:0 0 0 7px rgba(192,57,43,.05);} }
+  @keyframes dmcPulseGreen { 0%,100%{box-shadow:0 0 0 3px rgba(39,174,96,.2);}  50%{box-shadow:0 0 0 7px rgba(39,174,96,.05);} }
+  @keyframes dmcPulseGold  { 0%,100%{box-shadow:0 0 0 3px rgba(201,168,76,.2);} 50%{box-shadow:0 0 0 7px rgba(201,168,76,.05);} }
+
+  /* ====== ENHANCEMENT ANIMATIONS ====== */
+
+  /* ─── TABLE OF CONTENTS SLIDE ─── */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .toc-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(58,79,44,.1), 0 0 0 1px rgba(58,79,44,.06);
+  }
+  .toc-col-hdr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .toc-col-hdr span { font-size: 16px; }
+  .toc-items {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--wh);
+    padding: 4px 0;
+    overflow: hidden;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background .18s;
+    direction: rtl;
+    text-align: right;
+    border-bottom: 1px solid var(--gp2);
+  }
+  .toc-item:last-child { border-bottom: none; }
+  .toc-item:hover { background: var(--gp); }
+  .toc-num {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--gd);
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 9px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .toc-icon { font-size: 14px; flex-shrink: 0; }
+  .toc-text {
+    font-family: 'Cairo', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gd);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .toc-page {
+    font-family: 'Cairo', sans-serif;
+    font-size: 9px;
+    color: #aaa;
+    flex-shrink: 0;
+  }
+
+  /* ====== ENHANCEMENT ANIMATIONS ====== */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideRight {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scaleXIn {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 1; }
+  }
+  @keyframes typewriter {
+    from { max-width: 0; }
+    to   { max-width: 800px; }
+  }
+  @keyframes pulse-glow {
+    0%,100% { text-shadow: 0 0 0px transparent; }
+    50%      { text-shadow: 0 0 22px rgba(201,168,76,.85); }
+  }
+  @keyframes rippleDot {
+    from { box-shadow: 0 0 0 0 rgba(255,255,255,.7); }
+    to   { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+  @keyframes dashDraw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes gaugeFill {
+    from { stroke-dasharray: 0 283; }
+  }
+
+  /* Entrance helpers */
+  .ent { opacity: 0; }
+  .ent.play { animation: fadeSlideUp .55s cubic-bezier(.22,.68,0,1.2) forwards; }
+
+  /* Slide-in from left */
+  .st { opacity: 0; }
+  .slide.active .st { animation: fadeSlideRight .5s .05s ease forwards; }
+
+  /* Scale-in from right */
+  .sr { transform: scaleX(0); transform-origin: right; }
+  .slide.active .sr { animation: scaleXIn .5s .15s ease forwards; }
+
+  /* Typewriter on cover title */
+  .c-title {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 0;
+    display: inline-block;
+  }
+  .slide.active .c-title { animation: typewriter .9s .25s cubic-bezier(.4,0,.2,1) forwards; }
+
+  /* Glow pulse on key numbers */
+  .glow-num { animation: pulse-glow 2.6s ease-in-out infinite; }
+  /* Counter done glow */
+  .anim-num.done { animation: pulse-glow .8s ease; }
+
+  /* SVG gauge animated arc */
+  .gauge-arc-animated {
+    stroke-dasharray: 0 283;
+    animation: gaugeFill 1.2s .3s ease forwards;
+  }
+
+  /* Nav dot ripple */
+  .dot.ripple { animation: rippleDot .5s ease forwards; }
+  /* Active dot pulse */
+  .dot.on { animation: dotPulse 2.2s ease-in-out infinite !important; transform: scale(1.5) !important; }
+  @keyframes dotPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,.55); }
+    50%      { box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+  }
+
+  /* Particles canvas */
+  #particles-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .6s;
+  }
+  #particles-canvas.show { opacity: 1; }
+
+  /* Slide title toast */
+  #slide-toast {
+    position: fixed;
+    top: 54px; left: 50%;
+    transform: translateX(-50%) translateY(-14px);
+    background: rgba(58,79,44,.92);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 700;
+    padding: 5px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity .35s, transform .35s;
+    pointer-events: none;
+    z-index: 1001;
+    white-space: nowrap;
+  }
+  #slide-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Overview mode */
+  #overview {
+    position: fixed; inset: 0;
+    background: rgba(20,30,14,.96);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 40px;
+    overflow-y: auto;
+  }
+  #overview.open { display: flex; }
+  .ov-thumb {
+    width: 180px; height: 108px;
+    background: var(--bg-slide);
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color .2s, transform .2s;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .ov-thumb:hover { border-color: var(--gll); transform: scale(1.06); }
+  .ov-thumb.cur { border-color: var(--gold); }
+  .ov-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(58,79,44,.85);
+    color: #fff;
+    font-size: 10px; font-family: 'Cairo', sans-serif; font-weight: 700;
+    padding: 3px 6px; text-align: center;
+  }
+  .ov-num {
+    position: absolute; top: 4px; right: 6px;
+    background: var(--gd); color: #fff;
+    font-size: 9px; font-weight: 900;
+    padding: 1px 6px; border-radius: 8px;
+  }
+
+  /* ─── DIRECTION-AWARE TRANSITIONS (now on .slide-body level) ─── */
+
+  /* ─── ENHANCED HOVER EFFECTS ─── */
+  .scard { transition: transform .22s ease, box-shadow .22s ease; }
+  .scard:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(58,79,44,.22); }
+  .cstat { transition: all .22s ease; cursor: default; }
+  .cstat:hover { background: rgba(255,255,255,.22); transform: scale(1.05); }
+  .cki { transition: transform .2s ease, box-shadow .2s ease; }
+  .cki:hover { transform: translateX(-5px); box-shadow: 0 6px 22px rgba(58,79,44,.16); }
+  .fbox:hover .fbox-icon { transform: scale(1.2); transition: transform .2s; }
+  .gauge-card { transition: transform .2s ease, box-shadow .2s ease; }
+  .gauge-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(58,79,44,.16); }
+
+  /* ─── HORIZONTAL PHASES (s5) ─── */
+  #s5 .sb > div:not(.grid4) { display: none; }
+  #s5 .grid4 {
+    display: flex; flex-direction: column; gap: 12px;
+    grid-template-columns: unset; align-content: unset; align-items: stretch;
+  }
+  #s5 .gblock {
+    flex-direction: row; align-items: center; gap: 0; padding: 12px 16px;
+    border-top: none; border-right: 5px solid var(--gd);
+  }
+  #s5 .gblock[style*="gold"] { border-right-color: var(--gold); }
+  #s5 .gblock:hover { transform: translateX(-5px); }
+  #s5 .gblock-icon-col {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 72px; flex-shrink: 0; gap: 3px;
+  }
+  #s5 .gblock-main-col { flex: 1; padding: 0 18px; }
+  #s5 .gblock .ph-icon { font-size: 28px; margin-bottom: 0; }
+  #s5 .gblock .ph-num { font-size: 13px; }
+  #s5 .gblock .lbl { margin-bottom: 2px; }
+  #s5 .gblock .ttl { font-size: 15px; margin-bottom: 3px; }
+  #s5 .gblock .dsc { font-size: 12px; }
+  #s5 .gblock .mtr { flex-shrink: 0; margin-top: 0; white-space: nowrap; }
+
+  /* ─── HORIZONTAL KPI GAUGES RTL (s6, s_sales, s_mkt) ─── */
+  #s6 .kpi-gauges, #s_sales .kpi-gauges, #s_mkt .kpi-gauges {
+    display: flex; flex-direction: column; gap: 9px;
+    grid-template-columns: unset; align-content: unset; align-items: stretch;
+  }
+  #s6 .gauge-card, #s_sales .gauge-card, #s_mkt .gauge-card {
+    flex-direction: row-reverse; align-items: center;
+    padding: 7px 12px; gap: 0; width: 100%;
+  }
+  #s6 .gauge-card::before, #s_sales .gauge-card::before, #s_mkt .gauge-card::before {
+    top: 0; right: 0; left: unset; bottom: 0; width: 4px; height: auto;
+    background: linear-gradient(to bottom, var(--gd), var(--gll));
+  }
+  #s6 .gauge-card:hover, #s_sales .gauge-card:hover, #s_mkt .gauge-card:hover { transform: translateX(5px); }
+  #s6 .gc-info, #s_sales .gc-info, #s_mkt .gc-info {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    flex: 1; padding-right: 14px; padding-left: 0; text-align: right;
+  }
+  #s6 .gc-gauge, #s_sales .gc-gauge, #s_mkt .gc-gauge {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    flex-shrink: 0; width: 125px;
+  }
+  #s6 .gc-info .gc-lbl, #s_sales .gc-info .gc-lbl, #s_mkt .gc-info .gc-lbl { font-size: 9px; }
+  #s6 .gc-info .gc-title, #s_sales .gc-info .gc-title, #s_mkt .gc-info .gc-title { font-size: 14px; }
+  #s6 .gc-info .gc-desc, #s_sales .gc-info .gc-desc, #s_mkt .gc-info .gc-desc { font-size: 10px; color: #777; line-height: 1.3; }
+  #s6 .gc-gauge .gc-val, #s_sales .gc-gauge .gc-val, #s_mkt .gc-gauge .gc-val { font-size: 16px; }
+  #s6 .gc-gauge .gc-unit, #s_sales .gc-gauge .gc-unit, #s_mkt .gc-gauge .gc-unit { font-size: 10px; }
+  #s6 .gc-arc-svg, #s_sales .gc-arc-svg, #s_mkt .gc-arc-svg { width: 78px !important; height: 44px !important; }
+  #s6 .sh, #s_sales .sh, #s_mkt .sh { margin-bottom: 10px; }
+  #s6 .st, #s_sales .st, #s_mkt .st { font-size: 26px; margin-bottom: 4px; }
+
+  /* ─── HIDE REDUNDANT INTERNAL TOP-BAR (shared-topbar replaces it) ─── */
+  .slide .top-bar { opacity: 0; pointer-events: none; }
+
+  /* ─── GAUGE DIRECTION: gc-gauge RIGHT, gc-info LEFT ─── */
+  #s6 .gc-gauge, #s_sales .gc-gauge, #s_mkt .gc-gauge { order: -1; }
+
+  /* ─── s_sales / s_mkt — HORIZONTAL LAYOUT (same as #s6) ─── */
+  #s_sales .kpi-gauges, #s_mkt .kpi-gauges {
+    display: flex; flex-direction: column; gap: 12px;
+    grid-template-columns: unset; align-content: unset; align-items: stretch;
+  }
+  #s_sales .gauge-card, #s_mkt .gauge-card {
+    flex-direction: row; align-items: center;
+    padding: 12px 20px; gap: 0; width: 100%;
+  }
+  #s_sales .gauge-card::before, #s_mkt .gauge-card::before {
+    top: 0; left: 0; right: unset; bottom: 0; width: 4px; height: auto;
+    background: linear-gradient(to bottom, var(--gd), var(--gll));
+  }
+  #s_sales .gauge-card:hover, #s_mkt .gauge-card:hover { transform: translateX(-5px); }
+  #s_sales .gc-info, #s_mkt .gc-info {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    flex: 1; padding-right: 16px; text-align: right;
+  }
+  #s_sales .gc-gauge, #s_mkt .gc-gauge {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    flex-shrink: 0; width: 160px;
+  }
+  #s_sales .gc-info .gc-lbl, #s_mkt .gc-info .gc-lbl { font-size: 9px; }
+  #s_sales .gc-info .gc-title, #s_mkt .gc-info .gc-title { font-size: 16px; }
+  #s_sales .gc-info .gc-desc, #s_mkt .gc-info .gc-desc { font-size: 11px; color: #777; line-height: 1.4; }
+  #s_sales .gc-gauge .gc-val, #s_mkt .gc-gauge .gc-val { font-size: 22px; }
+  #s_sales .gc-gauge .gc-unit, #s_mkt .gc-gauge .gc-unit { font-size: 12px; }
+
+  /* ─── SHIMMER ON PROGRESS BARS ─── */
+  @keyframes shimmer {
+    from { background-position: -200% center; }
+    to   { background-position:  200% center; }
+  }
+  .pbar-inner { position: relative; overflow: hidden; }
+  .pbar-inner::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s .8s ease forwards;
+  }
+
+  /* ─── SIDEBAR BREATHING ─── */
+  @keyframes sidebarBreath {
+    0%,100% { background: var(--gd); }
+    50%      { background: #2f4024; }
+  }
+  #pside { animation: sidebarBreath 8s ease-in-out infinite; }
+
+  /* ─── AUTO-PLAY RING ─── */
+  #ap-ring {
+    position: fixed; bottom: 100px; left: 50%;
+    transform: translateX(-50%);
+    width: 42px; height: 42px;
+    display: none; z-index: 999; pointer-events: none;
+  }
+  #ap-ring.show { display: block; }
+  #ap-ring svg { transform: rotate(-90deg); display: block; }
+
+  /* ─── HELP MODAL ─── */
+  #help-modal {
+    position: fixed; inset: 0;
+    background: rgba(8,14,6,.84);
+    backdrop-filter: blur(14px);
+    z-index: 3000;
+    display: none;
+    align-items: center; justify-content: center;
+  }
+  #help-modal.open { display: flex; }
+  .help-box {
+    background: var(--bg-slide);
+    border-radius: 22px; padding: 34px 44px;
+    max-width: 460px; width: 90%;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    border: 1px solid var(--br);
+  }
+  .help-box h3 {
+    font-family: 'Cairo', sans-serif; font-size: 21px;
+    font-weight: 900; color: var(--gd); margin-bottom: 22px; text-align: center;
+  }
+  .hrow {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 9px 0; border-bottom: 1px solid var(--br);
+    font-size: 13px; color: var(--tb); font-family: 'Cairo', sans-serif; gap: 12px;
+  }
+  .hrow:last-of-type { border-bottom: none; }
+  .hkey {
+    background: var(--gd); color: #fff;
+    padding: 2px 10px; border-radius: 5px;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Courier New', monospace; white-space: nowrap; flex-shrink: 0;
+  }
+  .help-close-btn {
+    display: block; margin: 20px auto 0;
+    background: var(--gd); color: #fff;
+    border: none; padding: 10px 30px;
+    border-radius: 10px; font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: background .2s;
+  }
+  .help-close-btn:hover { background: var(--gm); }
+
+  /* ─── CONFETTI ─── */
+  #confetti-canvas {
+    position: fixed; inset: 0; pointer-events: none;
+    z-index: 4; opacity: 0; transition: opacity .5s;
+  }
+  #confetti-canvas.show { opacity: 1; }
+
+  /* ─── PRESENTATION TIMER ─── */
+  #pres-timer {
+    position: fixed; bottom: 52px; left: 18px;
+    background: rgba(58,79,44,.82);
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,.75); font-family: 'Cairo', sans-serif;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 11px; border-radius: 8px;
+    z-index: 999; letter-spacing: 1.2px;
+  }
+
+  /* ─── PERSISTENT SIDEBAR ─── */
+  #pside {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 280px;
+    z-index: 400;
+    background: var(--gd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #pside::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  #pside::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,.15) 30%, rgba(255,255,255,.15) 70%, transparent);
+  }
+  .pside-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 16px;
+  }
+  .pside-name {
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .pside-name span { display: block; font-size: 9px; opacity: .65; font-weight: 400; margin-top: 2px; }
+  .pside-divider {
+    width: 65%;
+    height: 1px;
+    background: rgba(255,255,255,.25);
+    flex-shrink: 0;
+  }
+  .pside-stats { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .pside-stat {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+    transition: background .2s;
+  }
+  .pside-stat:hover { background: rgba(255,255,255,.16); }
+  .pside-num { font-size: 20px; font-weight: 900; color: #fff; font-family: 'Cairo', sans-serif; }
+  .pside-lbl { font-size: 9px; color: rgba(255,255,255,.7); margin-top: 2px; }
+  /* Slide 1: hide old sidebar panel, extend cover-left */
+  #s1 .cover-right { display: none; }
+  #s1 .cover-left { padding-right: 300px; }
+
+  /* ─── EXECUTIVE TWEET OPENING SLIDE ─── */
+  #s_tweet { background: #f5f8f0; }
+  .ts-wrap {
+    flex: 1; display: flex; overflow: hidden; direction: rtl;
+  }
+  /* CEO column — visual RIGHT (1st child in RTL flex after reorder) */
+  .ts-ceo-col {
+    width: 280px; flex-shrink: 0;
+    background: linear-gradient(175deg, var(--gd) 0%, #1b2910 100%);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 28px 18px; gap: 13px;
+    position: relative; overflow: hidden;
+  }
+  .ts-ceo-col::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .ts-ceo-col::after {
+    content: '';
+    position: absolute; top: 0; right: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,.3) 30%, rgba(201,168,76,.3) 70%, transparent);
+  }
+  .ts-osoul-block { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .ts-osoul-name  { color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; text-align: center; }
+  .ts-osoul-sub   { color: rgba(255,255,255,.45); font-size: 9px; letter-spacing: 1.5px; }
+  .ts-ceo-divider {
+    position: relative; z-index: 2; width: 65%; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,.45), transparent);
+  }
+  .ts-photo-ring {
+    position: relative; z-index: 2;
+    width: 148px; height: 148px; border-radius: 50%; flex-shrink: 0;
+    padding: 3px;
+    background: linear-gradient(135deg, var(--gold) 0%, rgba(201,168,76,.25) 100%);
+    box-shadow: 0 0 0 7px rgba(201,168,76,.12), 0 14px 44px rgba(0,0,0,.45);
+  }
+  .ts-photo-ring img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
+  }
+  .ts-ceo-info    { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .ts-ceo-name-lbl{ color: #fff; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; text-align: center; line-height: 1.4; }
+  .ts-ceo-badge   {
+    background: rgba(201,168,76,.2); border: 1px solid rgba(201,168,76,.5);
+    border-radius: 20px; padding: 3px 14px; color: var(--gold);
+    font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 600;
+  }
+  /* Quote column — visual LEFT (2nd child in RTL flex after reorder) */
+  .ts-quote-col {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding: 28px 44px 28px 52px; position: relative; overflow: hidden; gap: 9px;
+    border-right: 3px solid var(--gold);
+    background: linear-gradient(145deg, #ffffff 0%, #f8faf4 100%);
+  }
+  .ts-tweet-badge { display: flex; align-items: center; gap: 10px; direction: rtl; }
+  .ts-x-icon {
+    width: 28px; height: 28px; background: #000; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ts-tweet-label { font-size: 11px; color: var(--tm); font-weight: 600; }
+  .ts-qqm {
+    font-size: 76px; line-height: .6; color: var(--gold); opacity: .45;
+    font-family: Georgia, serif; text-align: right; user-select: none;
+  }
+  .ts-quote-body  { display: flex; flex-direction: column; gap: 7px; }
+  .ts-qt-para     { font-family: 'Cairo', sans-serif; font-size: 13.5px; color: var(--tb); line-height: 1.85; text-align: right; direction: rtl; margin: 0; }
+  .ts-qt-para strong { color: var(--gd); font-weight: 700; }
+  .ts-rule-sep    { text-align: center; color: var(--gold); font-size: 12px; opacity: .55; }
+  .ts-qt-highlight {
+    background: linear-gradient(135deg, var(--gd) 0%, var(--gm) 100%);
+    border-radius: 10px; padding: 12px 18px;
+    color: #fff; font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 700;
+    text-align: center; direction: rtl;
+    box-shadow: 0 4px 18px rgba(58,79,44,.22);
+    border-right: 4px solid var(--gold);
+  }
+  .ts-qt-closing  { font-size: 12.5px; color: var(--tm); direction: rtl; text-align: right; margin: 0; font-family: 'Cairo', sans-serif; }
+  .ts-qt-closing em { font-style: normal; font-weight: 700; color: var(--gd); }
+  .ts-sig {
+    display: flex; align-items: center; gap: 10px; direction: rtl;
+    padding-top: 10px; border-top: 1px solid var(--br);
+  }
+  .ts-sig-avatar  { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); flex-shrink: 0; }
+  .ts-sig-name    { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; color: var(--gd); }
+  .ts-sig-title   { font-size: 10px; color: var(--tm); }
+  /* Tweet slide: no persistent sidebar, reset footer padding */
+  #s_tweet .sf    { padding: 8px 52px; }
+  /* Hide persistent sidebar on the tweet/intro slide */
+  .shell:has(#s_tweet.active) #pside { display: none; }
+
+  /* ─── INTRO SLIDE DARK THEME ─── */
+  #s_tweet { background: linear-gradient(135deg, #0d1a07 0%, #192c0e 45%, #111f09 100%); }
+  #s_tweet .ts-quote-col {
+    background: linear-gradient(160deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.02) 100%);
+    border-right-color: rgba(201,168,76,.55);
+  }
+  #s_tweet .ts-qt-para { color: rgba(255,255,255,.86); }
+  #s_tweet .ts-qt-para strong { color: #c9a84c; font-weight: 800; }
+  #s_tweet .ts-tweet-label { color: rgba(255,255,255,.5); }
+  #s_tweet .ts-qqm { color: var(--gold); opacity: .5; }
+  #s_tweet .ts-rule-sep { color: var(--gold); opacity: .7; }
+  #s_tweet .ts-qt-highlight {
+    background: linear-gradient(135deg, rgba(201,168,76,.18) 0%, rgba(201,168,76,.1) 100%);
+    border: 1px solid rgba(201,168,76,.45);
+    border-right: 4px solid var(--gold);
+    color: #e8d08a;
+    box-shadow: 0 4px 20px rgba(201,168,76,.12);
+  }
+  #s_tweet .ts-qt-closing { color: rgba(255,255,255,.5); }
+  #s_tweet .ts-qt-closing em { color: #c9a84c; }
+  #s_tweet .ts-sig { border-top-color: rgba(255,255,255,.12); }
+  #s_tweet .ts-sig-name { color: rgba(255,255,255,.92); }
+  #s_tweet .ts-sig-title { color: rgba(255,255,255,.5); }
+  /* Intro slide exit animation for CEO column */
+  .ts-ceo-col { transition: transform .6s cubic-bezier(.4,0,1,1), opacity .55s ease; }
+  .ts-ceo-col.ts-col-exit { transform: translateX(110%) !important; opacity: 0 !important; }
+  .ts-quote-col { transition: opacity .45s ease, transform .45s ease; }
+  .ts-quote-col.ts-quote-exit { opacity: 0 !important; transform: scale(0.96) translateX(-20px) !important; }
+  /* Shared bars visibility */
+  body.on-intro #shared-topbar,
+  body.on-intro #shared-footer { opacity: 0; pointer-events: none; }
+  #shared-topbar, #shared-footer {
+    transition: opacity .35s ease;
+  }
+
+  /* ─── SHARED FIXED TOP & BOTTOM BARS ─── */
+  #shared-topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 200;
+    background: var(--gd);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 52px 10px calc(280px + 30px);
+  }
+  #shared-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    background: var(--gd);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 52px 8px calc(280px + 30px);
+  }
+  #shared-topbar .top-bar-logo { display: flex; align-items: center; gap: 12px; }
+  #shared-topbar .top-bar-name { color:#fff;font-size:13px;font-weight:700;line-height:1.35;text-align:right; }
+  #shared-topbar .top-bar-name span { display:block;font-size:10px;font-weight:400;opacity:.75; }
+  #shared-topbar .top-bar-tagline { color:rgba(255,255,255,.55);font-size:11px;direction:ltr; }
+  #shared-footer .sf-text { font-size:10px;color:rgba(255,255,255,.65);font-family:'Cairo',sans-serif; }
+  #shared-footer .pg-num {
+    background:rgba(255,255,255,.15);color:#fff;
+    padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;
+    font-family:'Cairo',sans-serif;
+  }
+
+  /* ─── PRINT STYLES ─── */
+  @media print {
+    body { background: #fff !important; overflow: visible !important; height: auto !important; }
+    .shell { box-shadow: none !important; height: auto !important; overflow: visible !important; }
+    .slide {
+      position: relative !important; opacity: 1 !important;
+      transform: none !important; display: flex !important;
+      pointer-events: all !important; page-break-after: always; height: 100vh;
+    }
+    .nav-bar, #fs-btn, #top-progress, #particles-canvas,
+    #slide-toast, #overview, #ap-ring, #help-modal,
+    #confetti-canvas, #pres-timer, #pside,
+    #shared-topbar, #shared-footer { display: none !important; }
+  }
   </style>
 </head>
 <body>
 
 <!-- ─── OSOUL LOGO SVG (reusable inline) ─── -->
-<svg style="display:none" id="osoul-logo-def">
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" id="osoul-logo-def" aria-hidden="true">
   <defs>
+    <!-- Gauge gradients -->
+    <linearGradient id="grad-olive" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3a4f2c"/>
+      <stop offset="100%" stop-color="#8aaa68"/>
+    </linearGradient>
+    <linearGradient id="grad-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9a6e00"/>
+      <stop offset="100%" stop-color="#c9a84c"/>
+    </linearGradient>
+    <linearGradient id="grad-green-lt" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4a6235"/>
+      <stop offset="100%" stop-color="#8aaa68"/>
+    </linearGradient>
+    <filter id="gauge-glow" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="1.8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
     <symbol id="osoul-logo" viewBox="0 0 200 200">
       <!-- Stylized chicken head inside a circle — represents Osoul brand -->
       <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" stroke-width="6"/>
@@ -711,7 +1511,7 @@
 </svg>
 
 <!-- ─── WATERMARK SVG (BG elements, used on each slide) ─── -->
-<svg style="display:none">
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
   <defs>
     <symbol id="wm-chicken" viewBox="0 0 120 120">
       <ellipse cx="60" cy="75" rx="28" ry="22" fill="currentColor"/>
@@ -738,7 +1538,79 @@
 <div class="shell" id="shell">
 
   <!-- ══════════════════════════════════════════ -->
-  <div class="slide active" id="s1" style="padding:0;background:var(--bg-slide);">
+  <!-- SLIDE INTRO — افتتاحية الرئيس التنفيذي   -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide active" id="s_tweet" style="padding:0;">
+
+    <div class="ts-wrap">
+
+      <!-- VISUAL RIGHT (1st in RTL flex): صورة المدير والشعار -->
+      <div class="ts-ceo-col">
+        <div class="ts-osoul-block">
+          <img src="img/log.png" width="96" height="96" style="filter:brightness(0)invert(1) sepia(15%);opacity:0.9;display:block;object-fit:contain;position:relative;z-index:2;">
+          <div class="ts-osoul-name">دواجن أصول</div>
+          <div class="ts-osoul-sub">OSOUL POULTRY</div>
+        </div>
+
+        <div class="ts-ceo-divider"></div>
+
+        <div class="ts-photo-ring">
+          <img src="img/kedman.jpg" alt="د. عبدالله السرحاني">
+        </div>
+
+        <div class="ts-ceo-info">
+          <div class="ts-ceo-name-lbl">د. عبدالله بن كدمان<br>السرحاني</div>
+          <div class="ts-ceo-badge">الرئيس التنفيذي</div>
+        </div>
+
+        <div class="ts-ceo-divider"></div>
+
+        <div style="position:relative;z-index:2;text-align:center;">
+          <img src="img/logo.png" width="38" height="38" style="filter:brightness(0)invert(1);opacity:0.4;display:inline-block;object-fit:contain;">
+          <div style="color:rgba(255,255,255,.35);font-size:8px;margin-top:3px;font-family:'Cairo',sans-serif;letter-spacing:1px;">تعاونية عسير</div>
+        </div>
+      </div>
+
+      <!-- VISUAL LEFT (2nd in RTL flex): نص التغريدة -->
+      <div class="ts-quote-col">
+        <div class="ts-tweet-badge">
+          <div class="ts-x-icon">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </div>
+          <span class="ts-tweet-label">رؤية قيادية &nbsp;·&nbsp; تغريدة الرئيس التنفيذي</span>
+        </div>
+
+        <div class="ts-qqm">"</div>
+
+        <div class="ts-quote-body">
+          <p class="ts-qt-para">في تجاربي تعلّمت أن الاستراتيجية لا تُقاس بجمال العرض… بل <strong>بقدرتها على التحول إلى أرقام تُدار يوميًا.</strong></p>
+          <p class="ts-qt-para">عملنا اليوم في تعاونية عسير على مراجعة الأرقام والتواريخ والمستهدفات، وأدركت أن النجاح الحقيقي لا يأتي من التخطيط فقط، بل من وضوح المنظومة كاملة: إنتاج مرتبط بالبيع، وبيع مدعوم بالطلب، وطلب يصنعه تسويق واعٍ.</p>
+          <div class="ts-rule-sep">◆</div>
+          <div class="ts-qt-highlight">
+            لا إنتاج بلا بيع… &nbsp;·&nbsp; ولا بيع بلا طلب… &nbsp;·&nbsp; ولا طلب بلا تسويق
+          </div>
+          <p class="ts-qt-closing">وفي التجربة الأعمق: <em>الأرقام الصغيرة تصنع الفارق الكبير…</em> وتحويل العمل إلى لغة أرقام هو بداية التحكم الحقيقي.</p>
+        </div>
+
+        <div class="ts-sig">
+          <img src="img/kedman.jpg" class="ts-sig-avatar" alt="">
+          <div>
+            <div class="ts-sig-name">د. عبدالله بن كدمان السرحاني</div>
+            <div class="ts-sig-title">الرئيس التنفيذي — تعاونية عسير لانتاج لحوم الدواجن</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ts-wrap -->
+
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — استراتيجية التحول التشغيلي 2026</span>
+      <span class="pg-num">1 / 18</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s1" style="padding:0;background:var(--bg-slide);">
     <!-- watermarks -->
     <div class="wm">
       <svg width="260" height="260" style="top:-30px;left:-40px;opacity:.04;color:var(--gd)"><use href="#wm-chicken"/></svg>
@@ -749,7 +1621,7 @@
     <!-- TOP BAR (no heading here, full cover) -->
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="38" height="38" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="38" height="38" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">
           تعاونية عسير لانتاج لحوم الدواجن
           <span>Aseer Cooperative for Poultry Production</span>
@@ -772,7 +1644,7 @@
       </div>
       <div class="cover-right">
         <div class="cover-logo-big">
-          <svg width="140" height="140" color="rgba(255,255,255,0.9)"><use href="#osoul-logo"/></svg>
+          <img src="img/logo.png" width="140" height="140" style="filter:brightness(0)invert(1);opacity:0.92;display:block;object-fit:contain;">
         </div>
         <div class="cover-stats">
           <div class="cstat">
@@ -799,6 +1671,167 @@
   </div>
 
   <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE TOC — محتويات العرض -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s_toc" style="padding:0;">
+    <div class="wm">
+      <svg width="240" height="240" style="bottom:-30px;right:-30px;opacity:.03;color:var(--gd)"><use href="#wm-chicken"/></svg>
+      <svg width="140" height="280" style="top:20px;left:40px;opacity:.03;color:var(--gd)"><use href="#wm-wheat"/></svg>
+    </div>
+    <div class="top-bar">
+      <div class="top-bar-logo">
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
+        <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
+      </div>
+      <div class="top-bar-tagline">استراتيجية 2026</div>
+    </div>
+    <div class="slide-body">
+      <div class="sh">
+        <h2 class="st">محتويات العرض</h2>
+        <div class="sr"></div>
+      </div>
+      <div class="sb" style="overflow:hidden;">
+        <div class="toc-grid">
+
+          <!-- Column 1: الرؤية والأهداف -->
+          <div class="toc-col">
+            <div class="toc-col-hdr" style="background:linear-gradient(135deg,var(--gd),var(--gm));">
+              <span>🎯</span> الرؤية والأهداف
+            </div>
+            <div class="toc-items">
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s1'))">
+                <div class="toc-num">01</div>
+                <span class="toc-icon">🏠</span>
+                <span class="toc-text">استراتيجية التحول التشغيلي</span>
+                <span class="toc-page">ص 1</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_why'))">
+                <div class="toc-num">02</div>
+                <span class="toc-icon">❓</span>
+                <span class="toc-text">لماذا هذا الهدف؟</span>
+                <span class="toc-page">ص 2</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s3'))">
+                <div class="toc-num">03</div>
+                <span class="toc-icon">🔢</span>
+                <span class="toc-text">معادلة النجاح</span>
+                <span class="toc-page">ص 3</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s2'))">
+                <div class="toc-num">04</div>
+                <span class="toc-icon">🔗</span>
+                <span class="toc-text">المنظومة المتكاملة</span>
+                <span class="toc-page">ص 4</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_target'))">
+                <div class="toc-num">05</div>
+                <span class="toc-icon">🏹</span>
+                <span class="toc-text">الهدف التنفيذي</span>
+                <span class="toc-page">ص 5</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s5'))">
+                <div class="toc-num">06</div>
+                <span class="toc-icon">📅</span>
+                <span class="toc-text">مراحل التنفيذ</span>
+                <span class="toc-page">ص 6</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: المؤشرات والأداء -->
+          <div class="toc-col">
+            <div class="toc-col-hdr" style="background:linear-gradient(135deg,#3d6b2c,#5a8c40);">
+              <span>📊</span> المؤشرات والأداء
+            </div>
+            <div class="toc-items">
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s6'))">
+                <div class="toc-num">07</div>
+                <span class="toc-icon">⚙️</span>
+                <span class="toc-text">مؤشرات التشغيل</span>
+                <span class="toc-page">ص 7</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_sales'))">
+                <div class="toc-num">08</div>
+                <span class="toc-icon">💼</span>
+                <span class="toc-text">مؤشرات المبيعات</span>
+                <span class="toc-page">ص 8</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_mkt'))">
+                <div class="toc-num">09</div>
+                <span class="toc-icon">📣</span>
+                <span class="toc-text">مؤشرات التسويق</span>
+                <span class="toc-page">ص 9</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_golden'))">
+                <div class="toc-num">10</div>
+                <span class="toc-icon">🏅</span>
+                <span class="toc-text">القاعدة الذهبية</span>
+                <span class="toc-page">ص 10</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s4'))">
+                <div class="toc-num">11</div>
+                <span class="toc-icon">🔍</span>
+                <span class="toc-text">أثر الأرقام الصغيرة</span>
+                <span class="toc-page">ص 11</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: التشغيل والتنفيذ -->
+          <div class="toc-col">
+            <div class="toc-col-hdr" style="background:linear-gradient(135deg,#5a4a1e,#8a7030);">
+              <span>🛠️</span> التشغيل والتنفيذ
+            </div>
+            <div class="toc-items">
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_model'))">
+                <div class="toc-num">12</div>
+                <span class="toc-icon">💻</span>
+                <span class="toc-text">النموذج التشغيلي الرقمي</span>
+                <span class="toc-page">ص 12</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s7'))">
+                <div class="toc-num">13</div>
+                <span class="toc-icon">📋</span>
+                <span class="toc-text">لوحة القيادة اليومية</span>
+                <span class="toc-page">ص 13</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_culture'))">
+                <div class="toc-num">14</div>
+                <span class="toc-icon">🤝</span>
+                <span class="toc-text">ثقافة العمل</span>
+                <span class="toc-page">ص 14</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s8'))">
+                <div class="toc-num">15</div>
+                <span class="toc-icon">👥</span>
+                <span class="toc-text">توزيع المسؤوليات</span>
+                <span class="toc-page">ص 15</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s_next'))">
+                <div class="toc-num">16</div>
+                <span class="toc-icon">🚀</span>
+                <span class="toc-text">الخطوات التالية</span>
+                <span class="toc-page">ص 16</span>
+              </div>
+              <div class="toc-item" onclick="goTo(Array.prototype.findIndex.call(document.querySelectorAll('.slide'),s=>s.id==='s9'))">
+                <div class="toc-num">17</div>
+                <span class="toc-icon">🏆</span>
+                <span class="toc-text">الختام</span>
+                <span class="toc-page">ص 17</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="sf">
+      <span>تعاونية عسير لانتاج لحوم الدواجن — استراتيجية التحول التشغيلي 2026</span>
+      <span class="pg-num">2 / 17</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
   <!-- SLIDE WHY — لماذا هذا الهدف؟ -->
   <!-- ══════════════════════════════════════════ -->
   <div class="slide" id="s_why" style="padding:0;">
@@ -808,7 +1841,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -820,28 +1853,28 @@
       </div>
       <div class="sb" style="justify-content:center;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;width:100%;">
-          <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gd);display:flex;align-items:flex-start;gap:16px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gd);display:flex;align-items:flex-start;gap:16px;">
             <div style="font-size:36px;flex-shrink:0;">🎯</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:20px;font-weight:900;color:var(--gd);margin-bottom:6px;">تعزيز الحصة السوقية</div>
               <div style="font-size:14px;color:#666;line-height:1.5;">توسيع الحضور في السوق المحلي وتعزيز الموقع التنافسي للتعاونية</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gm);display:flex;align-items:flex-start;gap:16px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gm);display:flex;align-items:flex-start;gap:16px;">
             <div style="font-size:36px;flex-shrink:0;">⚙️</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:20px;font-weight:900;color:var(--gd);margin-bottom:6px;">رفع الكفاءة التشغيلية</div>
               <div style="font-size:14px;color:#666;line-height:1.5;">تحسين نسب FCR والنفوق وتعظيم الطاقة الإنتاجية عبر السلسلة كاملها</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gl);display:flex;align-items:flex-start;gap:16px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gl);display:flex;align-items:flex-start;gap:16px;">
             <div style="font-size:36px;flex-shrink:0;">💰</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:20px;font-weight:900;color:var(--gd);margin-bottom:6px;">تحقيق استدامة مالية</div>
               <div style="font-size:14px;color:#666;line-height:1.5;">تحقيق الربحية المستدامة باستمرار وضمان التدفقات النقدية اليومية</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gold);display:flex;align-items:flex-start;gap:16px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 4px 18px rgba(58,79,44,.1);border-right:5px solid var(--gold);display:flex;align-items:flex-start;gap:16px;">
             <div style="font-size:36px;flex-shrink:0;">🏆</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:20px;font-weight:900;color:var(--gd);margin-bottom:6px;">بناء كيان وطني تعاوني رائد</div>
@@ -865,7 +1898,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -925,7 +1958,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -944,9 +1977,9 @@
           </div>
           <div class="farrow"><div class="fline"></div></div>
           <div class="fbox">
-            <div class="fbox-icon">🛒</div>
-            <div class="fbox-name">المبيعات</div>
-            <div class="fbox-desc">توزيع وتسويق للمنتجات الاساسية والثانوية<br>بكفاءة عالية وربحية مستدامة</div>
+            <div class="fbox-icon">🌾</div>
+            <div class="fbox-name">المزارع</div>
+            <div class="fbox-desc">تربية وتسمين<br>وفق معايير صحية FCR</div>
           </div>
           <div class="farrow"><div class="fline"></div></div>
           <div class="fbox">
@@ -956,9 +1989,9 @@
           </div>
           <div class="farrow"><div class="fline"></div></div>
           <div class="fbox">
-            <div class="fbox-icon">🌾</div>
-            <div class="fbox-name">المزارع</div>
-            <div class="fbox-desc">تربية وتسمين<br>وفق معايير صحية FCR</div>
+            <div class="fbox-icon">🛒</div>
+            <div class="fbox-name">المبيعات</div>
+            <div class="fbox-desc">توزيع وتسويق للمنتجات الاساسية والثانوية<br>بكفاءة عالية وربحية مستدامة</div>
           </div>
         </div>
         <!-- Mini bar chart showing capacity at each stage -->
@@ -966,23 +1999,23 @@
           <div style="font-size:12px;color:#888;text-align:center;margin-bottom:8px;font-family:'Cairo',sans-serif;">الطاقة الإنتاجية المستهدفة (ألف طائر/يوم)</div>
           <div class="bar-chart-wrap" style="height:125px;align-items:flex-end;">
             <div class="bar-col">
-              <div class="bar-val">600</div>
+              <div class="bar-val">625</div>
               <div class="bar" style="height:65px;"></div>
               <div class="bar-lbl">الفقاسات</div>
             </div>
             <div class="bar-col">
-              <div class="bar-val">580</div>
-              <div class="bar" style="height:62px;opacity:.85;"></div>
+              <div class="bar-val">525</div>
+              <div class="bar" style="height:55px;opacity:.85;"></div>
               <div class="bar-lbl">المزارع</div>
             </div>
             <div class="bar-col">
-              <div class="bar-val">560</div>
-              <div class="bar" style="height:59px;opacity:.7;"></div>
+              <div class="bar-val">500</div>
+              <div class="bar" style="height:52px;opacity:.7;"></div>
               <div class="bar-lbl">المسالخ</div>
             </div>
             <div class="bar-col">
-              <div class="bar-val">550</div>
-              <div class="bar" style="height:56px;opacity:.55;background:linear-gradient(to top,var(--gold),#e8c96a);"></div>
+              <div class="bar-val">500</div>
+              <div class="bar" style="height:52px;opacity:.55;background:linear-gradient(to top,var(--gold),#e8c96a);"></div>
               <div class="bar-lbl">المبيعات</div>
             </div>
           </div>
@@ -1006,7 +2039,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1067,7 +2100,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1089,36 +2122,52 @@
         </div>
         <div class="grid4">
           <div class="gblock">
-            <div class="ph-icon">🏗️</div>
-            <div class="ph-num">01</div>
-            <div class="lbl">المرحلة الأولى</div>
-            <div class="ttl">الاستقرار</div>
-            <div class="dsc">تثبيت العمليات الأساسية وضبط معايير الجودة في جميع المحطات</div>
+            <div class="gblock-icon-col">
+              <div class="ph-icon">🏗️</div>
+              <div class="ph-num">01</div>
+            </div>
+            <div class="gblock-main-col">
+              <div class="lbl">المرحلة الأولى</div>
+              <div class="ttl">الاستقرار</div>
+              <div class="dsc">تثبيت العمليات الأساسية وضبط معايير الجودة في جميع المحطات</div>
+            </div>
             <div class="mtr">Q1 2026</div>
           </div>
           <div class="gblock">
-            <div class="ph-icon">⚙️</div>
-            <div class="ph-num">02</div>
-            <div class="lbl">المرحلة الثانية</div>
-            <div class="ttl">الكفاءة</div>
-            <div class="dsc">تحسين مؤشر FCR وخفض النفوق إلى المستويات المستهدفة</div>
+            <div class="gblock-icon-col">
+              <div class="ph-icon">⚙️</div>
+              <div class="ph-num">02</div>
+            </div>
+            <div class="gblock-main-col">
+              <div class="lbl">المرحلة الثانية</div>
+              <div class="ttl">الكفاءة</div>
+              <div class="dsc">تحسين مؤشر FCR وخفض النفوق إلى المستويات المستهدفة</div>
+            </div>
             <div class="mtr">Q2 2026</div>
           </div>
           <div class="gblock">
-            <div class="ph-icon">📈</div>
-            <div class="ph-num">03</div>
-            <div class="lbl">المرحلة الثالثة</div>
-            <div class="ttl">التحسين</div>
-            <div class="dsc">رفع طاقة المسالخ وتطوير سلسلة التوزيع والبيع الميداني</div>
-            <div class="mtr">Q3 2026</div>
+            <div class="gblock-icon-col">
+              <div class="ph-icon">📈</div>
+              <div class="ph-num">03</div>
+            </div>
+            <div class="gblock-main-col">
+              <div class="lbl">المرحلة الثالثة</div>
+              <div class="ttl">التحسين</div>
+              <div class="dsc">رفع طاقة المسالخ وتطوير سلسلة التوزيع والبيع الميداني</div>
+            </div>
+            <div class="mtr">Q4 2026</div>
           </div>
-          <div class="gblock" style="border-top-color:var(--gold);">
-            <div class="ph-icon">🚀</div>
-            <div class="ph-num" style="color:#e8d89a;">04</div>
-            <div class="lbl" style="color:var(--gold);">المرحلة الرابعة</div>
-            <div class="ttl">التوسع</div>
-            <div class="dsc">الوصول إلى الطاقة الكاملة: 550,000 طائر يومياً</div>
-            <div class="mtr" style="background:#fdf6e3;color:var(--gold);">Q4 2026</div>
+          <div class="gblock" style="border-right-color:var(--gold);">
+            <div class="gblock-icon-col">
+              <div class="ph-icon">🚀</div>
+              <div class="ph-num" style="color:#e8d89a;">04</div>
+            </div>
+            <div class="gblock-main-col">
+              <div class="lbl" style="color:var(--gold);">المرحلة الرابعة</div>
+              <div class="ttl">التوسع</div>
+              <div class="dsc">الوصول إلى الطاقة الكاملة: 550,000 طائر يومياً</div>
+            </div>
+            <div class="mtr" style="background:#fdf6e3;color:var(--gold);">2027</div>
           </div>
         </div>
       </div>
@@ -1137,7 +2186,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1151,55 +2200,79 @@
         <div class="kpi-gauges">
           <!-- KPI 1 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">🐔</div>
-            <div class="gc-title">الإنتاجية</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
-            </svg>
-            <div class="gc-val">550,000</div>
-            <div class="gc-unit">طائر / يوم</div>
-            <div class="gc-desc">الطاقة الإنتاجية اليومية المستهدفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:32px;">🐔</div>
+              <div class="gc-title">الإنتاجية</div>
+              <div class="gc-desc">الطاقة الإنتاجية اليومية المستهدفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="100" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">550,000</div>
+              <div class="gc-unit">طائر / يوم</div>
+            </div>
           </div>
           <!-- KPI 2 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">📉</div>
-            <div class="gc-title">النفوق</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="30,200"/>
-            </svg>
-            <div class="gc-val">&lt; 4%</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">الحد الأقصى المقبول لنسبة النفوق</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:32px;">📉</div>
+              <div class="gc-title">النفوق</div>
+              <div class="gc-desc">الحد الأقصى المقبول لنسبة النفوق</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="20" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-green-lt)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">&lt; 4%</div>
+              <div class="gc-unit">بالدورة</div>
+            </div>
           </div>
           <!-- KPI 3 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">🌾</div>
-            <div class="gc-title">FCR</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
-            </svg>
-            <div class="gc-val">≤ 1.45</div>
-            <div class="gc-unit">عبر دورة التربية</div>
-            <div class="gc-desc">معدل التحويل الغذائي</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:32px;">🌾</div>
+              <div class="gc-title">FCR</div>
+              <div class="gc-desc">معدل التحويل الغذائي</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="72" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">≤ 1.3</div>
+              <div class="gc-unit">عبر دورة التربية</div>
+            </div>
           </div>
           <!-- KPI 4 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">⚖️</div>
-            <div class="gc-title">الوزن</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
-            </svg>
-            <div class="gc-val">1.4 كجم</div>
-            <div class="gc-unit">عند الذبح</div>
-            <div class="gc-desc">الوزن المستهدف للطائر</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:32px;">⚖️</div>
+              <div class="gc-title">الوزن</div>
+              <div class="gc-desc">الوزن المستهدف للطائر عند الذبح</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="85" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">1.4 كجم</div>
+              <div class="gc-unit">عند الذبح</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1220,7 +2293,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1233,52 +2306,76 @@
       <div class="sb" style="justify-content:center;">
         <div class="kpi-gauges">
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">📊</div>
-            <div class="gc-title">حجم البيع اليومي</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
-            </svg>
-            <div class="gc-val">550,000</div>
-            <div class="gc-unit">طائر / يوم</div>
-            <div class="gc-desc">إجمالي المبيعات اليومية المستهدفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">📊</div>
+              <div class="gc-title">حجم البيع اليومي</div>
+              <div class="gc-desc">إجمالي المبيعات اليومية المستهدفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="100" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">550,000</div>
+              <div class="gc-unit">طائر / يوم</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">✅</div>
-            <div class="gc-title">نسبة المبيعات</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="95,200"/>
-            </svg>
-            <div class="gc-val">≥ 85%</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">بيع الإنتاج بالكامل</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">✅</div>
+              <div class="gc-title">نسبة المبيعات</div>
+              <div class="gc-desc">بيع الإنتاج بالكامل</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="85" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">≥ 85%</div>
+              <div class="gc-unit">يومياً</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">💰</div>
-            <div class="gc-title">متوسط السعر</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="75,200"/>
-            </svg>
-            <div class="gc-val">مراقب</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">تتبع سعر البيع مقارنة بالتكلفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">💰</div>
+              <div class="gc-title">متوسط السعر</div>
+              <div class="gc-desc">تتبع سعر البيع مقارنة بالتكلفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="75" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-gold)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">مراقب</div>
+              <div class="gc-unit">يومياً</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">⏱️</div>
-            <div class="gc-title">التحصيل النقدي</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="80,200"/>
-            </svg>
-            <div class="gc-val">≤ 7 ايام للمبرد , 30 يوم للمجمد</div>
-            <div class="gc-unit">متوسط التحصيل</div>
-            <div class="gc-desc">سرعة الدورة النقدية وكفاءة الجباية</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">⏱️</div>
+              <div class="gc-title">التحصيل النقدي</div>
+              <div class="gc-desc">سرعة الدورة النقدية وكفاءة الجباية</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="80" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-green-lt)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">≤ 7 أيام (مبرد) — 30 يوم (مجمد)</div>
+              <div class="gc-unit">متوسط التحصيل</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1298,7 +2395,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1311,52 +2408,76 @@
       <div class="sb" style="justify-content:center;">
         <div class="kpi-gauges">
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📈</div>
-            <div class="gc-title">الحصة السوقية</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="60,200"/>
-            </svg>
-            <div class="gc-val">متنامية</div>
-            <div class="gc-unit">تحت المراقبة</div>
-            <div class="gc-desc">توسيع الحضور في السوق المحلي</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📈</div>
+              <div class="gc-title">الحصة السوقية</div>
+              <div class="gc-desc">توسيع الحضور في السوق المحلي</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="60" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">متنامية</div>
+              <div class="gc-unit">تحت المراقبة</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📣</div>
-            <div class="gc-title">مستوى الطلب</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
-            </svg>
-            <div class="gc-val">مرتفع</div>
-            <div class="gc-unit">/ متوسط / ضعيف</div>
-            <div class="gc-desc">قياس مستوى الطلب اليومي على الإنتاج</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📣</div>
+              <div class="gc-title">مستوى الطلب</div>
+              <div class="gc-desc">قياس مستوى الطلب اليومي على الإنتاج</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="85" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-olive)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">مرتفع</div>
+              <div class="gc-unit">/ متوسط / ضعيف</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">🏷️</div>
-            <div class="gc-title">قوة العلامة</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="50,200"/>
-            </svg>
-            <div class="gc-val">قيد البناء</div>
-            <div class="gc-unit">مرحلة التأسيس</div>
-            <div class="gc-desc">بناء هوية تجارية مميزة في المنطقة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">🏷️</div>
+              <div class="gc-title">قوة العلامة</div>
+              <div class="gc-desc">انتشار هوية تجارية مميزة في المملكة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="50" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-gold)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">قيد البناء</div>
+              <div class="gc-unit">مرحلة التأسيس</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📊</div>
-            <div class="gc-title">استقرار الأسعار</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#c9a84c" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
-            </svg>
-            <div class="gc-val">هدف</div>
-            <div class="gc-unit">أولوية قصوى</div>
-            <div class="gc-desc">تجنب التذبذب لضمان ثقة العملاء</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📊</div>
+              <div class="gc-title">استقرار الأسعار</div>
+              <div class="gc-desc">تجنب التذبذب لضمان ثقة العملاء</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 100 58" class="gc-arc-svg" width="110" height="64">
+                <path d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="#e8ede2" stroke-width="8" stroke-linecap="round"/>
+                <path class="gauge-path" data-val="70" data-circ="125.7"
+                  d="M10,54 A40,40 0 0,1 90,54" fill="none" stroke="url(#grad-gold)" stroke-width="8"
+                  stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="125.7" filter="url(#gauge-glow)"/>
+              </svg>
+              <div class="gc-val">هدف</div>
+              <div class="gc-unit">أولوية قصوى</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1377,7 +2498,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1396,7 +2517,7 @@
             <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:#fff;line-height:1.3;">لا إنتاج<br>بدون بيع</div>
           </div>
           <!-- Arrow -->
-          <div style="flex-shrink:0;padding:0 10px;font-size:28px;color:var(--gl);">→</div>
+          <div style="flex-shrink:0;padding:0 10px;font-size:28px;color:var(--gl);">←</div>
           <!-- Chain item 2 -->
           <div style="flex:1;background:#fff;border-radius:18px;padding:32px 20px;text-align:center;box-shadow:0 8px 30px rgba(58,79,44,.15);border:2px solid var(--gp2);">
             <div style="font-size:40px;margin-bottom:12px;">🤝</div>
@@ -1404,7 +2525,7 @@
             <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);line-height:1.3;">ولا بيع<br>بدون طلب</div>
           </div>
           <!-- Arrow -->
-          <div style="flex-shrink:0;padding:0 10px;font-size:28px;color:var(--gl);">→</div>
+          <div style="flex-shrink:0;padding:0 10px;font-size:28px;color:var(--gl);">←</div>
           <!-- Chain item 3 -->
           <div style="flex:1;background:#fff;border-radius:18px;padding:32px 20px;text-align:center;box-shadow:0 8px 30px rgba(58,79,44,.15);border:2px solid var(--gp2);">
             <div style="font-size:40px;margin-bottom:12px;">📣</div>
@@ -1412,8 +2533,8 @@
             <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);line-height:1.3;">ولا طلب<br>بدون تسويق</div>
           </div>
         </div>
-        <div style="margin-top:24px;background:var(--gd);border-radius:12px;padding:14px 36px;text-align:center;">
-          <span style="font-family:'Cairo',sans-serif;font-size:17px;font-weight:700;color:#fff;">المنظومة كاملة أو لا شيء — لا نجاح فردي دون نجاح السلسلة</span>
+        <div style="margin-top:10px;background:var(--gd);border-radius:12px;padding:14px 36px;text-align:center;">
+          <span style="font-family:'Cairo',sans-serif;font-size:17px;font-weight:700;color:#fff;">المنظومة المتكاملة — لا نجاح فردي دون نجاح السلسلة</span>
         </div>
       </div>
     </div>
@@ -1431,7 +2552,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1468,8 +2589,8 @@
               <div style="display:flex;align-items:center;gap:10px;">
                 <div style="font-size:12px;width:80px;text-align:right;flex-shrink:0;font-family:'Cairo',sans-serif;color:#666;">الحالي</div>
                 <div style="flex:1;height:28px;background:var(--gp2);border-radius:6px;overflow:hidden;">
-                  <div style="width:65%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:6px;display:flex;align-items:center;padding-right:8px;">
-                    <span style="color:#fff;font-size:11px;font-family:'Cairo',sans-serif;font-weight:700;">357,500 طائر/يوم</span>
+                  <div style="width:45%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:6px;display:flex;align-items:center;padding-right:8px;">
+                    <span style="color:#fff;font-size:11px;font-family:'Cairo',sans-serif;font-weight:700;">250,000 طائر/يوم</span>
                   </div>
                 </div>
               </div>
@@ -1504,94 +2625,106 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
     </div>
-    <div class="slide-body">
+    <div class="slide-body" style="padding-bottom:75px;">
       <div class="sh">
         <h2 class="st">النموذج التشغيلي الرقمي</h2>
         <div class="sr"></div>
       </div>
-      <div class="sb" style="flex-direction:row;gap:16px;align-items:stretch;overflow:hidden;">
+      <div class="sb" style="flex-direction:column;gap:14px;overflow:hidden;padding-bottom:4px;">
 
-        <!-- Column 1: الإنتاج -->
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
-          <div style="background:linear-gradient(160deg,var(--gd),var(--gm));border-radius:14px;padding:16px 18px;color:#fff;flex-shrink:0;">
-            <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;font-family:'Cairo',sans-serif;font-weight:600;">نموذج الإنتاج</div>
-            <div style="font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.8;direction:ltr;text-align:left;">
-              الإنتاج = الإدخال × (1 − النفوق%) × الوزن
+        <!-- Column 1: نموذج الإنتاج -->
+        <div class="dmodel-card">
+          <div class="dmc-header" style="background:linear-gradient(135deg,var(--gd),var(--gm));">
+            <div class="dmc-icon">⚙️</div>
+            <div class="dmc-label">نموذج الإنتاج</div>
+            <div class="dmc-formula">الإنتاج = الإدخال × (1 − نسبة النفوق) × الوزن</div>
+          </div>
+          <div class="dmc-body">
+            <div class="dmc-row">
+              <span class="dmc-key">📦 الإدخال</span>
+              <span class="dmc-val">625,000 كتكوت</span>
+            </div>
+            <div class="dmc-row">
+              <span class="dmc-key">📉 النفوق</span>
+              <span class="dmc-val-ok">4%</span>
+            </div>
+            <div class="dmc-row">
+              <span class="dmc-key">⚖️ الوزن</span>
+              <span class="dmc-val">1.4 كجم</span>
+            </div>
+            <div class="dmc-divider"></div>
+            <div class="dmc-result">
+              <span class="dmc-res-label">= الناتج</span>
+              <span class="dmc-res-val anim-num" data-target="600000">600,000</span>
+              <span class="dmc-res-unit">طائر</span>
             </div>
           </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">مثال تطبيقي:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
-                <span style="color:#666;">الإدخال</span><span style="font-weight:700;color:var(--gd);">600,000 كتكوت</span>
+        </div>
+
+        <!-- Column 2: نموذج المخزون -->
+        <div class="dmodel-card">
+          <div class="dmc-header" style="background:linear-gradient(135deg,#3d2828,#5c3d3d);">
+            <div class="dmc-icon">⚠️</div>
+            <div class="dmc-label">نموذج المخزون</div>
+            <div class="dmc-formula">أيام المخزون = الرصيد ÷ المبيعات اليومية</div>
+          </div>
+          <div class="dmc-body">
+            <div class="dmc-status-item dmc-red">
+              <div class="dmc-status-dot"></div>
+              <div class="dmc-status-info">
+                <div class="dmc-status-val">> 3 أيام</div>
+                <div class="dmc-status-lbl">خطر تكدس — تصرف فوري</div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
-                <span style="color:#666;">النفوق</span><span style="font-weight:700;color:var(--gd);">4%</span>
+            </div>
+            <div class="dmc-status-item dmc-green">
+              <div class="dmc-status-dot"></div>
+              <div class="dmc-status-info">
+                <div class="dmc-status-val">1 — 2 يوم ✓</div>
+                <div class="dmc-status-lbl">الوضع الصحي المستهدف</div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
-                <span style="color:#666;">الوزن</span><span style="font-weight:700;color:var(--gd);">1.4 كجم</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;font-family:'Cairo',sans-serif;padding:6px 10px;background:var(--gd);border-radius:6px;">
-                <span style="color:rgba(255,255,255,.8);">= الناتج</span><span style="font-weight:900;color:#fff;" class="anim-num" data-target="588000">588,000 طائر</span>
+            </div>
+            <div class="dmc-status-item dmc-gold">
+              <div class="dmc-status-dot"></div>
+              <div class="dmc-status-info">
+                <div class="dmc-status-val">< 1 يوم</div>
+                <div class="dmc-status-lbl">نقص / فرصة رفع السعر</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Column 2: المخزون -->
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
-          <div style="background:linear-gradient(160deg,#b34040,#c0392b);border-radius:14px;padding:16px 18px;color:#fff;flex-shrink:0;">
-            <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px;font-family:'Cairo',sans-serif;font-weight:600;">نموذج المخزون ⚠️</div>
-            <div style="font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.8;direction:ltr;text-align:left;">
-              أيام المخزون = المخزون ÷ المبيعات اليومية
-            </div>
+        <!-- Column 3: نموذج الربحية -->
+        <div class="dmodel-card">
+          <div class="dmc-header" style="background:linear-gradient(135deg,#383018,#504828);">
+            <div class="dmc-icon">💰</div>
+            <div class="dmc-label">نموذج الربحية</div>
+            <div class="dmc-formula">الربح = (السعر − التكلفة) × الكمية</div>
           </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">مقياس صحة المخزون:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff0f0;border-radius:6px;border-right:3px solid #c0392b;">
-                <span style="font-size:16px;">🔴</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:#c0392b;">&gt; 3 أيام</strong> — خطر تكدس</div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f0f8ee;border-radius:6px;border-right:3px solid var(--gm);">
-                <span style="font-size:16px;">🟢</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:var(--gm);">1 — 2 يوم</strong> — وضع صحي</div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fffbee;border-radius:6px;border-right:3px solid var(--gold);">
-                <span style="font-size:16px;">🟡</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:#b8860b;">&lt; 1 يوم</strong> — نقص / فرصة رفع السعر</div>
+          <div class="dmc-body">
+            <div class="dmc-lever">
+              <div class="dmc-lever-icon" style="background:var(--gd);">🌾</div>
+              <div>
+                <div class="dmc-lever-text">خفض FCR</div>
+                <div class="dmc-lever-effect">← تقليل تكلفة العلف</div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Column 3: الربحية -->
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
-          <div style="background:linear-gradient(160deg,#7a5a00,var(--gold));border-radius:14px;padding:16px 18px;color:#fff;flex-shrink:0;">
-            <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:4px;font-family:'Cairo',sans-serif;font-weight:600;">نموذج الربحية</div>
-            <div style="font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.8;direction:ltr;text-align:left;">
-              الربح = (السعر − التكلفة) × الكمية
+            <div class="dmc-lever">
+              <div class="dmc-lever-icon" style="background:var(--gm);">📣</div>
+              <div>
+                <div class="dmc-lever-text">التسويق الفعال</div>
+                <div class="dmc-lever-effect">← رفع سعر البيع</div>
+              </div>
             </div>
-          </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">التحكم في الهامش عبر:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🌾</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">خفض FCR <strong style="color:var(--gd);">← تقليل تكلفة العلف</strong></div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gm);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📣</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">التسويق الفعال <strong style="color:var(--gd);">← رفع سعر البيع</strong></div>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📉</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">خفض النفوق <strong style="color:var(--gd);">← زيادة الكمية المباعة</strong></div>
+            <div class="dmc-lever">
+              <div class="dmc-lever-icon" style="background:var(--gl);">📉</div>
+              <div>
+                <div class="dmc-lever-text">خفض النفوق</div>
+                <div class="dmc-lever-effect">← زيادة الكمية المباعة</div>
               </div>
             </div>
           </div>
@@ -1613,7 +2746,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1627,11 +2760,11 @@
         <ul class="cklist">
           <li class="cki">
             <div class="ckico">✔</div>
-            <div class="cktxt"><strong>نسبة النفوق</strong> — أقل من 4% يومياً في جميع المزارع والمحطات</div>
+            <div class="cktxt"><strong>نسبة النفوق</strong> — أقل من 4% بالدورة في جميع المزارع والمحطات</div>
           </li>
           <li class="cki">
             <div class="ckico">✔</div>
-            <div class="cktxt"><strong>معدل FCR</strong> — لا يتجاوز 1.45 عبر الدورة الكاملة للتربية</div>
+            <div class="cktxt"><strong>معدل FCR</strong> — لا يتجاوز 1.3 عبر الدورة الكاملة للتربية</div>
           </li>
           <li class="cki">
             <div class="ckico">✔</div>
@@ -1649,7 +2782,7 @@
               <span>التقدم نحو الإنتاجية المستهدفة</span><span>65%</span>
             </div>
             <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
-              <div style="width:65%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+              <div class="pbar-inner" data-pct="65" style="width:0%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
             </div>
           </div>
           <div>
@@ -1657,7 +2790,7 @@
               <span>الامتثال لمعدل FCR المستهدف</span><span>78%</span>
             </div>
             <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
-              <div style="width:78%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+              <div class="pbar-inner" data-pct="78" style="width:0%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
             </div>
           </div>
           <div>
@@ -1665,7 +2798,7 @@
               <span>التحكم في نسبة النفوق</span><span>85%</span>
             </div>
             <div style="height:10px;background:var(--gp2);border-radius:5px;overflow:hidden;">
-              <div style="width:85%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
+              <div class="pbar-inner" data-pct="85" style="width:0%;height:100%;background:linear-gradient(to right,var(--gd),var(--gll));border-radius:5px;"></div>
             </div>
           </div>
         </div>
@@ -1687,7 +2820,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1699,28 +2832,28 @@
       </div>
       <div class="sb" style="justify-content:center;align-items:center;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:860px;width:100%;">
-          <div style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gd);">
+          <div class="ent" style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gd);">
             <div style="width:60px;height:60px;border-radius:50%;background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🎯</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);">انضباط</div>
               <div style="font-size:14px;color:#666;margin-top:4px;line-height:1.4;">الالتزام بالإجراءات والمعايير التشغيلية في كل موقع وكل يوم</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gm);">
+          <div class="ent" style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gm);">
             <div style="width:60px;height:60px;border-radius:50%;background:var(--gm);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">⚡</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);">سرعة القرار</div>
               <div style="font-size:14px;color:#666;margin-top:4px;line-height:1.4;">قرارات سريعة مبنية على بيانات واضحة دون تردد أو تأخير</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gl);">
+          <div class="ent" style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gl);">
             <div style="width:60px;height:60px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">📊</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);">العمل بالأرقام</div>
               <div style="font-size:14px;color:#666;margin-top:4px;line-height:1.4;">كل قرار تشغيلي مدعوم بالبيانات الفعلية — لا تخمين ولا اجتهاد</div>
             </div>
           </div>
-          <div style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gold);">
+          <div class="ent" style="background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 4px 18px rgba(58,79,44,.1);display:flex;align-items:center;gap:18px;border-bottom:4px solid var(--gold);">
             <div style="width:60px;height:60px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🔄</div>
             <div>
               <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);">التحسين المستمر</div>
@@ -1743,12 +2876,12 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
     </div>
-    <div class="slide-body">
+    <div class="slide-body" style="padding-bottom:75px;">
       <div class="sh">
         <h2 class="st">توزيع المسؤوليات</h2>
         <div class="sr"></div>
@@ -1837,7 +2970,7 @@
     </div>
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">استراتيجية 2026</div>
@@ -1851,7 +2984,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;">
 
           <!-- Week 1 -->
-          <div style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
               <div style="width:36px;height:36px;background:var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Cairo',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;">1</div>
               <div>
@@ -1867,7 +3000,7 @@
           </div>
 
           <!-- Week 2-4 -->
-          <div style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
               <div style="width:36px;height:36px;background:var(--gm);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Cairo',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;">2</div>
               <div>
@@ -1883,7 +3016,7 @@
           </div>
 
           <!-- Month 2+ -->
-          <div style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
+          <div class="ent" style="background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 4px 16px rgba(58,79,44,.1);display:flex;flex-direction:column;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
               <div style="width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Cairo',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;">3</div>
               <div>
@@ -1919,7 +3052,7 @@
   <div class="slide" id="s9" style="padding:0;">
     <div class="top-bar">
       <div class="top-bar-logo">
-        <svg width="32" height="32" color="#fff"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
         <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
       </div>
       <div class="top-bar-tagline">2026</div>
@@ -1931,7 +3064,7 @@
       <svg width="160" height="320" style="position:absolute;bottom:20px;right:80px;opacity:.05;color:#fff"><use href="#wm-wheat"/></svg>
 
       <div>
-        <svg width="80" height="80" color="rgba(255,255,255,0.8)" style="position:relative;z-index:2;"><use href="#osoul-logo"/></svg>
+        <img src="img/logo.png" width="80" height="80" style="filter:brightness(0)invert(1);opacity:0.8;position:relative;z-index:2;display:block;object-fit:contain;">
       </div>
       <div class="fhl">البيع بكفاءة<br>وربحية</div>
       <div class="fl"></div>
@@ -1942,7 +3075,7 @@
           <div style="font-size:10px;color:rgba(255,255,255,.7);">طائر / يوم</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 22px;text-align:center;">
-          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;">1.45</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;font-family:'Cairo',sans-serif;">1.3</div>
           <div style="font-size:10px;color:rgba(255,255,255,.7);">FCR مستهدف</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 22px;text-align:center;">
@@ -1954,6 +3087,44 @@
     </div>
   </div>
 
+  <!-- ─── PERSISTENT SIDEBAR ─── -->
+  <div id="pside">
+    <div class="pside-inner">
+      <img src="img/logo.png" width="118" height="118" style="filter:brightness(0)invert(1);opacity:0.92;display:block;object-fit:contain;">
+      <div class="pside-name">تعاونية عسير<span>Aseer Cooperative for Poultry Production</span></div>
+      <div class="pside-divider"></div>
+      <div class="pside-stats">
+        <div class="pside-stat">
+          <div class="pside-num">550,000</div>
+          <div class="pside-lbl">طائر / يوم (مستهدف)</div>
+        </div>
+        <div class="pside-stat">
+          <div class="pside-num">1.3</div>
+          <div class="pside-lbl">معدل التحويل الغذائي FCR</div>
+        </div>
+        <div class="pside-stat">
+          <div class="pside-num">4%</div>
+          <div class="pside-lbl">نسبة النفوق المستهدفة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── SHARED FIXED TOP BAR ─── -->
+<div id="shared-topbar">
+  <div class="top-bar-logo">
+    <img src="img/logo.png" width="32" height="32" style="filter:brightness(0)invert(1);display:block;object-fit:contain;">
+    <div class="top-bar-name">تعاونية عسير لانتاج لحوم الدواجن<span>Aseer Cooperative for Poultry Production</span></div>
+  </div>
+  <div class="top-bar-tagline">استراتيجية التحول التشغيلي 2026</div>
+</div>
+
+<!-- ─── SHARED FIXED FOOTER ─── -->
+<div id="shared-footer">
+  <span class="sf-text">تعاونية عسير لانتاج لحوم الدواجن — استراتيجية التحول التشغيلي 2026</span>
+  <span class="pg-num" id="shared-pg-num">1 / 18</span>
 </div>
 
 <div id="top-progress"><div id="top-progress-fill" style="width:6%"></div></div>
@@ -1978,11 +3149,14 @@
   const bn        = document.getElementById('bn');
   const pgFill    = document.getElementById('top-progress-fill');
 
-  slides.forEach((_, i) => {
+  slides.forEach((slide, i) => {
     const d = document.createElement('div');
     d.className = 'dot' + (i === 0 ? ' on' : '');
     d.addEventListener('click', () => goTo(i));
     dotsEl.appendChild(d);
+    // auto-update footer page numbers
+    const pgEl = slide.querySelector('.pg-num');
+    if (pgEl) pgEl.textContent = (i + 1) + ' / ' + total;
   });
 
   /* ── Animated counters ── */
@@ -1998,7 +3172,7 @@
         const val = Math.floor(ease * target);
         el.textContent = val.toLocaleString('ar-SA');
         if (p < 1) requestAnimationFrame(tick);
-        else el.textContent = target.toLocaleString('ar-SA');
+        else { el.textContent = target.toLocaleString('ar-SA'); el.classList.add('done'); setTimeout(() => el.classList.remove('done'), 1000); }
       };
       requestAnimationFrame(tick);
     });
@@ -2024,8 +3198,12 @@
     cntEl.textContent = (cur + 1) + ' / ' + total;
     bp.disabled = cur === 0;
     bn.disabled = cur === total - 1;
-    // progress bar
     pgFill.style.width = ((cur + 1) / total * 100) + '%';
+    // shared footer page number
+    const sPg = document.getElementById('shared-pg-num');
+    if (sPg) sPg.textContent = (cur + 1) + ' / ' + total;
+    // toggle intro mode (hide shared bars on intro slide)
+    document.body.classList.toggle('on-intro', cur === 0);
   }
 
   /* ── Keyboard ── */
@@ -2064,8 +3242,417 @@
       document.fullscreenElement ? '✕' : '⛶';
   });
 
+  document.body.classList.add('on-intro');
   sync();
   animateCounters(slides[0]);
+</script>
+
+<!-- Particles canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Slide title toast -->
+<div id="slide-toast"></div>
+
+<!-- Overview mode -->
+<div id="overview"></div>
+
+<script>
+/* ====== ENHANCEMENT SYSTEM ====== */
+
+/* --- Staggered entrance animations --- */
+function applyEntrance(slide) {
+  slide.querySelectorAll('.ent').forEach((el, i) => {
+    el.classList.remove('play');
+    el.style.animationDelay = '';
+  });
+}
+function playEntrance(slide) {
+  slide.querySelectorAll('.ent').forEach((el, i) => {
+    el.style.animationDelay = (i * 0.09) + 's';
+    // force reflow
+    void el.offsetWidth;
+    el.classList.add('play');
+  });
+}
+
+/* --- Animated SVG gauges --- */
+function playGauges(slide) {
+  slide.querySelectorAll('.gauge-path[data-val]').forEach(path => {
+    const pct = parseFloat(path.dataset.val) / 100;
+    const circ = parseFloat(path.dataset.circ || '125.7');
+    const fill = circ * pct;
+    path.style.transition = 'none';
+    path.style.strokeDasharray = circ;
+    path.style.strokeDashoffset = circ;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      path.style.transition = 'stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)';
+      path.style.strokeDashoffset = circ - fill;
+    }));
+  });
+}
+
+/* --- Progress bar fill animations --- */
+function playProgressBars(slide) {
+  slide.querySelectorAll('[data-pct]').forEach(bar => {
+    const target = bar.dataset.pct;
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)';
+        bar.style.width = target + '%';
+      });
+    });
+  });
+}
+
+/* --- Flowchart line draw --- */
+function playFlowLines(slide) {
+  slide.querySelectorAll('.flow-line').forEach((line, i) => {
+    const len = line.getTotalLength ? line.getTotalLength() : 200;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+    line.style.transition = 'none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        line.style.transition = 'stroke-dashoffset .7s ' + (i * .12) + 's ease';
+        line.style.strokeDashoffset = '0';
+      });
+    });
+  });
+}
+
+/* --- Particle system (canvas) --- */
+const pCanvas = document.getElementById('particles-canvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [], pRAF = null, pActive = false;
+
+function resizeParticles() {
+  pCanvas.width = window.innerWidth;
+  pCanvas.height = window.innerHeight;
+}
+resizeParticles();
+window.addEventListener('resize', resizeParticles);
+
+function spawnParticles(count) {
+  particles = [];
+  for (let i = 0; i < count; i++) {
+    const hue = Math.random() > .5 ? '#c9a84c' : '#8aaa68';
+    particles.push({
+      x: Math.random() * pCanvas.width,
+      y: Math.random() * pCanvas.height,
+      r: Math.random() * 2.5 + .5,
+      vx: (Math.random() - .5) * .6,
+      vy: -(Math.random() * .8 + .3),
+      alpha: Math.random() * .6 + .3,
+      color: hue
+    });
+  }
+}
+
+function tickParticles() {
+  pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    p.alpha -= .003;
+    if (p.alpha <= 0 || p.y < -10) {
+      p.y = pCanvas.height + 5;
+      p.x = Math.random() * pCanvas.width;
+      p.alpha = Math.random() * .6 + .3;
+    }
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pCtx.fillStyle = p.color;
+    pCtx.globalAlpha = p.alpha;
+    pCtx.fill();
+  });
+  pCtx.globalAlpha = 1;
+  if (pActive) pRAF = requestAnimationFrame(tickParticles);
+}
+
+function startParticles() {
+  if (pActive) return;
+  pCanvas.classList.add('show');
+  pActive = true;
+  spawnParticles(90);
+  tickParticles();
+}
+
+function stopParticles() {
+  pActive = false;
+  pCanvas.classList.remove('show');
+  if (pRAF) cancelAnimationFrame(pRAF);
+  pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+}
+
+const PARTICLE_SLIDES = ['s_tweet', 's1', 's9']; // intro + cover + closing
+
+/* --- Nav dot ripple --- */
+function rippleDot(idx) {
+  const dots = document.querySelectorAll('.dot');
+  if (!dots[idx]) return;
+  dots[idx].classList.remove('ripple');
+  void dots[idx].offsetWidth;
+  dots[idx].classList.add('ripple');
+  dots[idx].addEventListener('animationend', () => dots[idx].classList.remove('ripple'), { once: true });
+}
+
+/* --- Slide title toast --- */
+const toast = document.getElementById('slide-toast');
+let toastTimer = null;
+function showToast(text) {
+  if (!text) return;
+  toast.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* --- Overview mode --- */
+const ovEl = document.getElementById('overview');
+function buildOverview() {
+  if (ovEl.childElementCount > 0) return;
+  slides.forEach((sl, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'ov-thumb' + (i === cur ? ' cur' : '');
+    thumb.dataset.idx = i;
+    // label from h2/h3 inside slide
+    const heading = sl.querySelector('h2,h3,.stitle');
+    const label = heading ? heading.textContent.trim().slice(0, 28) : ('Slide ' + (i+1));
+    thumb.innerHTML = '<div class="ov-num">' + (i+1) + '</div><div class="ov-label">' + label + '</div>';
+    thumb.addEventListener('click', () => { closeOverview(); goTo(i); });
+    ovEl.appendChild(thumb);
+  });
+}
+function openOverview() {
+  buildOverview();
+  ovEl.classList.add('open');
+  // highlight current
+  ovEl.querySelectorAll('.ov-thumb').forEach((t, i) => t.classList.toggle('cur', i === cur));
+}
+function closeOverview() { ovEl.classList.remove('open'); }
+function toggleOverview() { ovEl.classList.contains('open') ? closeOverview() : openOverview(); }
+
+/* --- Keyboard shortcut for overview (O key) --- */
+document.addEventListener('keydown', e => {
+  if (e.key === 'o' || e.key === 'O') toggleOverview();
+  if (e.key === 'Escape') closeOverview();
+});
+
+/* --- Patch goTo to trigger all animations --- */
+const _goToOrig = goTo;
+
+function runSlideAnimations(idx) {
+  const slide = slides[idx];
+  if (!slide) return;
+  const id = slide.id;
+  applyEntrance(slide);
+  requestAnimationFrame(() => playEntrance(slide));
+  playProgressBars(slide);
+  playGauges(slide);
+  playFlowLines(slide);
+  if (PARTICLE_SLIDES.includes(id)) startParticles(); else stopParticles();
+  if (id === 's9') setTimeout(startConfetti, 400); else stopConfetti();
+  if (typeof apActive !== 'undefined' && apActive) {
+    clearTimeout(apTimer); setTimeout(startApCountdown, 100);
+  }
+  rippleDot(idx);
+  const heading = slide.querySelector('h2,h3,.stitle');
+  if (heading) showToast(heading.textContent.trim().slice(0, 40));
+  ovEl.querySelectorAll('.ov-thumb').forEach((t, i) => t.classList.toggle('cur', i === idx));
+}
+
+goTo = function(idx) {
+  if (idx === cur || idx < 0 || idx >= total) return;
+
+  // Special intro exit animation
+  if (cur === 0 && idx > 0) {
+    const introSlide = slides[0];
+    const ceoEl = introSlide.querySelector('.ts-ceo-col');
+    const quoteEl = introSlide.querySelector('.ts-quote-col');
+    if (ceoEl) ceoEl.classList.add('ts-col-exit');
+    if (quoteEl) quoteEl.classList.add('ts-quote-exit');
+    document.body.classList.remove('going-back');
+    setTimeout(() => {
+      _goToOrig(idx);
+      runSlideAnimations(idx);
+      setTimeout(() => {
+        if (ceoEl) ceoEl.classList.remove('ts-col-exit');
+        if (quoteEl) quoteEl.classList.remove('ts-quote-exit');
+      }, 700);
+    }, 320);
+    return;
+  }
+
+  const dir = idx > cur ? 'forward' : 'back';
+  document.body.classList.toggle('going-back', dir === 'back');
+  _goToOrig(idx);
+  setTimeout(() => document.body.classList.remove('going-back'), 600);
+  runSlideAnimations(idx);
+};
+
+/* Kick off particles if starting on a particle slide */
+if (slides[0] && PARTICLE_SLIDES.includes(slides[0].id)) startParticles();
+
+/* Run entrance animations on first slide */
+(function() {
+  const first = slides[0];
+  if (first) { applyEntrance(first); requestAnimationFrame(() => playEntrance(first)); }
+  playProgressBars(first);
+  playGauges(first);
+})();
+
+/* ═══════════════════════════════════════════════════
+   NEW POWER FEATURES
+═══════════════════════════════════════════════════ */
+
+/* ── Mouse wheel navigation ── */
+let wheelLock = false;
+window.addEventListener('wheel', e => {
+  if (wheelLock || ovEl.classList.contains('open')) return;
+  if (Math.abs(e.deltaY) < 20) return;
+  wheelLock = true;
+  go(e.deltaY > 0 ? +1 : -1);
+  setTimeout(() => wheelLock = false, 680);
+}, { passive: true });
+
+/* ── Auto-play (press A) ── */
+const AP_MS = 6000;
+let apActive = false, apTimer = null;
+const apRingEl = document.createElement('div');
+apRingEl.id = 'ap-ring';
+apRingEl.innerHTML = `<svg width="42" height="42" viewBox="0 0 42 42">
+  <circle cx="21" cy="21" r="17" stroke="rgba(255,255,255,.22)" stroke-width="3" fill="none"/>
+  <circle class="ap-fill" cx="21" cy="21" r="17" stroke="var(--gold)" stroke-width="3" fill="none"
+    stroke-dasharray="106.8" stroke-dashoffset="106.8" stroke-linecap="round" style="transition:none;"/>
+</svg>`;
+document.body.appendChild(apRingEl);
+
+function startApCountdown() {
+  if (!apActive) return;
+  const fill = apRingEl.querySelector('.ap-fill');
+  fill.style.transition = 'none';
+  fill.style.strokeDashoffset = '106.8';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    fill.style.transition = `stroke-dashoffset ${AP_MS}ms linear`;
+    fill.style.strokeDashoffset = '0';
+  }));
+  apTimer = setTimeout(() => {
+    if (!apActive) return;
+    if (cur >= total - 1) { stopAutoPlay(); return; }
+    go(+1);
+    startApCountdown();
+  }, AP_MS);
+}
+
+function startAutoPlay() {
+  apActive = true;
+  apRingEl.classList.add('show');
+  showToast('▶ عرض تلقائي — اضغط A للإيقاف');
+  startApCountdown();
+}
+
+function stopAutoPlay() {
+  apActive = false;
+  clearTimeout(apTimer);
+  apRingEl.classList.remove('show');
+}
+
+function toggleAutoPlay() { apActive ? stopAutoPlay() : startAutoPlay(); }
+
+/* ── Help modal (press ?) ── */
+const helpModal = document.createElement('div');
+helpModal.id = 'help-modal';
+helpModal.innerHTML = `<div class="help-box">
+  <h3>⌨️ اختصارات العرض</h3>
+  <div class="hrow"><span>الشريحة التالية</span><span class="hkey">← &nbsp;/&nbsp; ↓</span></div>
+  <div class="hrow"><span>الشريحة السابقة</span><span class="hkey">→ &nbsp;/&nbsp; ↑</span></div>
+  <div class="hrow"><span>عرض كل الشرائح</span><span class="hkey">O</span></div>
+  <div class="hrow"><span>عرض تلقائي (6 ث)</span><span class="hkey">A</span></div>
+  <div class="hrow"><span>شاشة كاملة</span><span class="hkey">F</span></div>
+  <div class="hrow"><span>هذه المساعدة</span><span class="hkey">?</span></div>
+  <div class="hrow"><span>تمرير الماوس</span><span class="hkey">Wheel ↕</span></div>
+  <div class="hrow"><span>إغلاق / إيقاف</span><span class="hkey">Esc</span></div>
+  <button class="help-close-btn" onclick="toggleHelp()">إغلاق</button>
+</div>`;
+helpModal.addEventListener('click', e => { if (e.target === helpModal) toggleHelp(); });
+document.body.appendChild(helpModal);
+
+function toggleHelp() { helpModal.classList.toggle('open'); }
+
+/* ── Keyboard additions ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'a' || e.key === 'A') toggleAutoPlay();
+  if (e.key === '?') toggleHelp();
+  if (e.key === 'Escape') { helpModal.classList.remove('open'); stopAutoPlay(); }
+});
+
+/* ── Presentation timer ── */
+const timerEl = document.createElement('div');
+timerEl.id = 'pres-timer';
+document.body.appendChild(timerEl);
+const presStart = Date.now();
+function tickTimer() {
+  const s = Math.floor((Date.now() - presStart) / 1000);
+  timerEl.textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+tickTimer();
+setInterval(tickTimer, 1000);
+
+/* ── Confetti (final slide s9) ── */
+const confCanvas = document.createElement('canvas');
+confCanvas.id = 'confetti-canvas';
+document.body.appendChild(confCanvas);
+const confCtx = confCanvas.getContext('2d');
+let confActive = false, confRAF = null, confParts = [];
+
+function resizeConf() { confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
+resizeConf();
+window.addEventListener('resize', resizeConf);
+
+const CONF_COLORS = ['#c9a84c', '#8aaa68', '#fff', '#6b8c4e', '#f0f4ea', '#3a4f2c', '#d4ddc8'];
+
+function spawnConf() {
+  confParts = Array.from({ length: 140 }, () => ({
+    x: Math.random() * confCanvas.width,
+    y: -20 - Math.random() * 280,
+    w: Math.random() * 12 + 4, h: Math.random() * 7 + 3,
+    color: CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)],
+    vy: Math.random() * 2.8 + 1.2, vx: (Math.random() - .5) * 2.8,
+    rot: Math.random() * 360, rSpd: (Math.random() - .5) * 9
+  }));
+}
+
+function tickConf() {
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  let any = false;
+  confParts.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.rot += p.rSpd;
+    if (p.y < confCanvas.height + 40) any = true;
+    confCtx.save();
+    confCtx.globalAlpha = Math.max(0, 1 - p.y / (confCanvas.height * 1.1));
+    confCtx.translate(p.x, p.y);
+    confCtx.rotate(p.rot * Math.PI / 180);
+    confCtx.fillStyle = p.color;
+    confCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    confCtx.restore();
+  });
+  confCtx.globalAlpha = 1;
+  if (confActive && any) confRAF = requestAnimationFrame(tickConf);
+  else { confActive = false; confCanvas.classList.remove('show'); }
+}
+
+function startConfetti() {
+  if (confActive) return;
+  confCanvas.classList.add('show');
+  confActive = true; spawnConf(); tickConf();
+}
+
+function stopConfetti() {
+  confActive = false; confCanvas.classList.remove('show');
+  if (confRAF) cancelAnimationFrame(confRAF);
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+}
 </script>
 </body>
 </html>

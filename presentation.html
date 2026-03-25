@@ -678,6 +678,115 @@
       margin-top: 1px;
     }
     .gauge-card .gc-unit { font-size: 11px; color: #888; }
+
+  /* ─── HORIZONTAL KPI GAUGES RTL (s6, s_sales, s_mkt) ─── */
+  #s6 .kpi-gauges, #s_sales .kpi-gauges, #s_mkt .kpi-gauges {
+    display: flex; flex-direction: column; gap: 9px;
+    grid-template-columns: unset; align-content: unset; align-items: stretch;
+  }
+  #s6 .gauge-card, #s_sales .gauge-card, #s_mkt .gauge-card {
+    flex-direction: row-reverse; align-items: center;
+    padding: 7px 12px; gap: 0; width: 100%;
+  }
+  #s6 .gauge-card::before, #s_sales .gauge-card::before, #s_mkt .gauge-card::before {
+    top: 0; right: 0; left: unset; bottom: 0; width: 4px; height: auto;
+    background: linear-gradient(to bottom, var(--gd), var(--gll));
+  }
+  #s6 .gauge-card:hover, #s_sales .gauge-card:hover, #s_mkt .gauge-card:hover { transform: translateX(5px); }
+  #s6 .gc-info, #s_sales .gc-info, #s_mkt .gc-info {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    flex: 1; padding-right: 14px; padding-left: 0; text-align: right;
+  }
+  #s6 .gc-gauge, #s_sales .gc-gauge, #s_mkt .gc-gauge {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    flex-shrink: 0; width: 125px;
+  }
+  #s6 .gc-info .gc-lbl, #s_sales .gc-info .gc-lbl, #s_mkt .gc-info .gc-lbl { font-size: 9px; }
+  #s6 .gc-info .gc-title, #s_sales .gc-info .gc-title, #s_mkt .gc-info .gc-title { font-size: 14px; }
+  #s6 .gc-info .gc-desc, #s_sales .gc-info .gc-desc, #s_mkt .gc-info .gc-desc { font-size: 10px; color: #777; line-height: 1.3; }
+  #s6 .gc-gauge .gc-val, #s_sales .gc-gauge .gc-val, #s_mkt .gc-gauge .gc-val { font-size: 16px; }
+  #s6 .gc-gauge .gc-unit, #s_sales .gc-gauge .gc-unit, #s_mkt .gc-gauge .gc-unit { font-size: 10px; }
+  #s6 .gc-arc-svg, #s_sales .gc-arc-svg, #s_mkt .gc-arc-svg { width: 78px !important; height: 44px !important; }
+  #s6 .sh, #s_sales .sh, #s_mkt .sh { margin-bottom: 10px; }
+  #s6 .st, #s_sales .st, #s_mkt .st { font-size: 26px; margin-bottom: 4px; }
+
+  /* ====== ENHANCEMENT ANIMATIONS ====== */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideRight {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scaleXIn {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 1; }
+  }
+  @keyframes typewriter {
+    from { max-width: 0; }
+    to   { max-width: 800px; }
+  }
+  @keyframes pulse-glow {
+    0%,100% { text-shadow: 0 0 0px transparent; }
+    50%      { text-shadow: 0 0 22px rgba(201,168,76,.85); }
+  }
+  @keyframes rippleDot {
+    from { box-shadow: 0 0 0 0 rgba(255,255,255,.7); }
+    to   { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+  }
+  @keyframes gaugeFill {
+    from { stroke-dasharray: 0 283; }
+  }
+  .ent { opacity: 0; }
+  .ent.play { animation: fadeSlideUp .55s cubic-bezier(.22,.68,0,1.2) forwards; }
+  .st-anim { opacity: 0; }
+  .slide.active .st-anim { animation: fadeSlideRight .5s .05s ease forwards; }
+  .sr-anim { transform: scaleX(0); transform-origin: right; }
+  .slide.active .sr-anim { animation: scaleXIn .5s .15s ease forwards; }
+  .c-title { overflow: hidden; white-space: nowrap; max-width: 0; display: inline-block; }
+  .slide.active .c-title { animation: typewriter .9s .25s cubic-bezier(.4,0,.2,1) forwards; }
+  .glow-num { animation: pulse-glow 2.6s ease-in-out infinite; }
+  .dot.ripple { animation: rippleDot .5s ease forwards; }
+  #particles-canvas {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    opacity: 0; transition: opacity .6s;
+  }
+  #particles-canvas.show { opacity: 1; }
+  #slide-toast {
+    position: fixed; top: 54px; left: 50%;
+    transform: translateX(-50%) translateY(-14px);
+    background: rgba(58,79,44,.92); backdrop-filter: blur(10px);
+    color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700;
+    padding: 5px 18px; border-radius: 20px;
+    opacity: 0; transition: opacity .35s, transform .35s;
+    pointer-events: none; z-index: 1001; white-space: nowrap;
+  }
+  #slide-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #overview {
+    position: fixed; inset: 0; background: rgba(20,30,14,.96);
+    z-index: 2000; display: none; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 14px; padding: 40px; overflow-y: auto;
+  }
+  #overview.open { display: flex; }
+  .ov-thumb {
+    width: 180px; height: 108px; background: var(--bg-slide);
+    border-radius: 8px; cursor: pointer; border: 2px solid transparent;
+    transition: border-color .2s, transform .2s; position: relative; flex-shrink: 0; overflow: hidden;
+  }
+  .ov-thumb:hover { border-color: var(--gll); transform: scale(1.06); }
+  .ov-thumb.cur { border-color: var(--gold); }
+  .ov-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(58,79,44,.85); color: #fff;
+    font-size: 10px; font-family: 'Cairo', sans-serif; font-weight: 700;
+    padding: 3px 6px; text-align: center;
+  }
+  .ov-num {
+    position: absolute; top: 4px; right: 6px;
+    background: var(--gd); color: #fff; font-size: 9px; font-weight: 900;
+    padding: 1px 6px; border-radius: 8px;
+  }
   </style>
 </head>
 <body>
@@ -1151,55 +1260,71 @@
         <div class="kpi-gauges">
           <!-- KPI 1 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">🐔</div>
-            <div class="gc-title">الإنتاجية</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
-            </svg>
-            <div class="gc-val">550,000</div>
-            <div class="gc-unit">طائر / يوم</div>
-            <div class="gc-desc">الطاقة الإنتاجية اليومية المستهدفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:26px;">🐔</div>
+              <div class="gc-title">الإنتاجية</div>
+              <div class="gc-desc">الطاقة الإنتاجية اليومية المستهدفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
+              </svg>
+              <div class="gc-val">550,000</div>
+              <div class="gc-unit">طائر / يوم</div>
+            </div>
           </div>
           <!-- KPI 2 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">📉</div>
-            <div class="gc-title">النفوق</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="30,200"/>
-            </svg>
-            <div class="gc-val">&lt; 2%</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">الحد الأقصى المقبول لنسبة النفوق</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:26px;">📉</div>
+              <div class="gc-title">النفوق</div>
+              <div class="gc-desc">الحد الأقصى المقبول لنسبة النفوق</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="30,200"/>
+              </svg>
+              <div class="gc-val">&lt; 2%</div>
+              <div class="gc-unit">بالدورة</div>
+            </div>
           </div>
           <!-- KPI 3 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">🌾</div>
-            <div class="gc-title">FCR</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
-            </svg>
-            <div class="gc-val">≤ 1.85</div>
-            <div class="gc-unit">عبر دورة التربية</div>
-            <div class="gc-desc">معدل التحويل الغذائي</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:26px;">🌾</div>
+              <div class="gc-title">FCR</div>
+              <div class="gc-desc">معدل التحويل الغذائي</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
+              </svg>
+              <div class="gc-val">≤ 1.85</div>
+              <div class="gc-unit">عبر دورة التربية</div>
+            </div>
           </div>
           <!-- KPI 4 -->
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر رئيسي</div>
-            <div style="font-size:20px;">⚖️</div>
-            <div class="gc-title">الوزن</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
-            </svg>
-            <div class="gc-val">2.5 كجم</div>
-            <div class="gc-unit">عند الذبح</div>
-            <div class="gc-desc">الوزن المستهدف للطائر</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر رئيسي</div>
+              <div style="font-size:26px;">⚖️</div>
+              <div class="gc-title">الوزن</div>
+              <div class="gc-desc">الوزن المستهدف للطائر عند الذبح</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
+              </svg>
+              <div class="gc-val">2.5 كجم</div>
+              <div class="gc-unit">عند الذبح</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1233,52 +1358,68 @@
       <div class="sb" style="justify-content:center;">
         <div class="kpi-gauges">
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">📊</div>
-            <div class="gc-title">حجم البيع اليومي</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
-            </svg>
-            <div class="gc-val">550,000</div>
-            <div class="gc-unit">طائر / يوم</div>
-            <div class="gc-desc">إجمالي المبيعات اليومية المستهدفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">📊</div>
+              <div class="gc-title">حجم البيع اليومي</div>
+              <div class="gc-desc">إجمالي المبيعات اليومية المستهدفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="100,200" stroke-dashoffset="0"/>
+              </svg>
+              <div class="gc-val">550,000</div>
+              <div class="gc-unit">طائر / يوم</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">✅</div>
-            <div class="gc-title">نسبة التصريف</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="95,200"/>
-            </svg>
-            <div class="gc-val">≥ 95%</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">Sell-through — بيع الإنتاج بالكامل</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">✅</div>
+              <div class="gc-title">نسبة التصريف</div>
+              <div class="gc-desc">Sell-through — بيع الإنتاج بالكامل</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="95,200"/>
+              </svg>
+              <div class="gc-val">≥ 95%</div>
+              <div class="gc-unit">يومياً</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">💰</div>
-            <div class="gc-title">متوسط السعر</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="75,200"/>
-            </svg>
-            <div class="gc-val">مراقب</div>
-            <div class="gc-unit">يومياً</div>
-            <div class="gc-desc">تتبع سعر البيع مقارنة بالتكلفة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">💰</div>
+              <div class="gc-title">متوسط السعر</div>
+              <div class="gc-desc">تتبع سعر البيع مقارنة بالتكلفة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="75,200"/>
+              </svg>
+              <div class="gc-val">مراقب</div>
+              <div class="gc-unit">يومياً</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر مبيعات</div>
-            <div style="font-size:20px;">⏱️</div>
-            <div class="gc-title">التحصيل النقدي</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="80,200"/>
-            </svg>
-            <div class="gc-val">≤ 2 يوم</div>
-            <div class="gc-unit">متوسط التحصيل</div>
-            <div class="gc-desc">سرعة الدورة النقدية وكفاءة الجباية</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر مبيعات</div>
+              <div style="font-size:26px;">⏱️</div>
+              <div class="gc-title">التحصيل النقدي</div>
+              <div class="gc-desc">سرعة الدورة النقدية وكفاءة الجباية</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#8aaa68" stroke-width="7" stroke-linecap="round" stroke-dasharray="80,200"/>
+              </svg>
+              <div class="gc-val">≤ 2 يوم</div>
+              <div class="gc-unit">متوسط التحصيل</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1311,52 +1452,68 @@
       <div class="sb" style="justify-content:center;">
         <div class="kpi-gauges">
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📈</div>
-            <div class="gc-title">الحصة السوقية</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="60,200"/>
-            </svg>
-            <div class="gc-val">متنامية</div>
-            <div class="gc-unit">تحت المراقبة</div>
-            <div class="gc-desc">توسيع الحضور في السوق المحلي</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📈</div>
+              <div class="gc-title">الحصة السوقية</div>
+              <div class="gc-desc">توسيع الحضور في السوق المحلي</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#3a4f2c" stroke-width="7" stroke-linecap="round" stroke-dasharray="60,200"/>
+              </svg>
+              <div class="gc-val">متنامية</div>
+              <div class="gc-unit">تحت المراقبة</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📣</div>
-            <div class="gc-title">مستوى الطلب</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
-            </svg>
-            <div class="gc-val">مرتفع</div>
-            <div class="gc-unit">/ متوسط / ضعيف</div>
-            <div class="gc-desc">قياس مستوى الطلب اليومي على الإنتاج</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📣</div>
+              <div class="gc-title">مستوى الطلب</div>
+              <div class="gc-desc">قياس مستوى الطلب اليومي على الإنتاج</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#4a6235" stroke-width="7" stroke-linecap="round" stroke-dasharray="85,200"/>
+              </svg>
+              <div class="gc-val">مرتفع</div>
+              <div class="gc-unit">/ متوسط / ضعيف</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">🏷️</div>
-            <div class="gc-title">قوة العلامة</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="50,200"/>
-            </svg>
-            <div class="gc-val">قيد البناء</div>
-            <div class="gc-unit">مرحلة التأسيس</div>
-            <div class="gc-desc">بناء هوية تجارية مميزة في المنطقة</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">🏷️</div>
+              <div class="gc-title">قوة العلامة</div>
+              <div class="gc-desc">بناء هوية تجارية مميزة في المنطقة</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#6b8c4e" stroke-width="7" stroke-linecap="round" stroke-dasharray="50,200"/>
+              </svg>
+              <div class="gc-val">قيد البناء</div>
+              <div class="gc-unit">مرحلة التأسيس</div>
+            </div>
           </div>
           <div class="gauge-card">
-            <div class="gc-lbl">مؤشر تسويق</div>
-            <div style="font-size:20px;">📊</div>
-            <div class="gc-title">استقرار الأسعار</div>
-            <svg viewBox="0 0 80 45" width="60" height="34">
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
-              <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#c9a84c" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
-            </svg>
-            <div class="gc-val">هدف</div>
-            <div class="gc-unit">أولوية قصوى</div>
-            <div class="gc-desc">تجنب التذبذب لضمان ثقة العملاء</div>
+            <div class="gc-info">
+              <div class="gc-lbl">مؤشر تسويق</div>
+              <div style="font-size:26px;">📊</div>
+              <div class="gc-title">استقرار الأسعار</div>
+              <div class="gc-desc">تجنب التذبذب لضمان ثقة العملاء</div>
+            </div>
+            <div class="gc-gauge">
+              <svg viewBox="0 0 80 45" class="gc-arc-svg" width="78" height="44">
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+                <path d="M8,40 A32,32 0 0,1 72,40" fill="none" stroke="#c9a84c" stroke-width="7" stroke-linecap="round" stroke-dasharray="70,200"/>
+              </svg>
+              <div class="gc-val">هدف</div>
+              <div class="gc-unit">أولوية قصوى</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1412,7 +1569,7 @@
             <div style="font-family:'Cairo',sans-serif;font-size:22px;font-weight:900;color:var(--gd);line-height:1.3;">ولا طلب<br>بدون تسويق</div>
           </div>
         </div>
-        <div style="margin-top:24px;background:var(--gd);border-radius:12px;padding:14px 36px;text-align:center;">
+        <div style="margin-top:10px;background:var(--gd);border-radius:12px;padding:14px 36px;text-align:center;">
           <span style="font-family:'Cairo',sans-serif;font-size:17px;font-weight:700;color:#fff;">المنظومة كاملة أو لا شيء — لا نجاح فردي دون نجاح السلسلة</span>
         </div>
       </div>
@@ -1524,19 +1681,19 @@
               الإنتاج = الإدخال × (1 − النفوق%) × الوزن
             </div>
           </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">مثال تطبيقي:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
+          <div style="background:#fff;border-radius:10px;padding:4px 8px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex-shrink:0;">
+            <div style="font-size:10px;color:var(--gl);font-weight:700;margin-bottom:2px;font-family:'Cairo',sans-serif;">مثال تطبيقي:</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-family:'Cairo',sans-serif;padding:2px 7px;background:var(--gp);border-radius:5px;">
                 <span style="color:#666;">الإدخال</span><span style="font-weight:700;color:var(--gd);">600,000 كتكوت</span>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-family:'Cairo',sans-serif;padding:2px 7px;background:var(--gp);border-radius:5px;">
                 <span style="color:#666;">النفوق</span><span style="font-weight:700;color:var(--gd);">2%</span>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:5px 10px;background:var(--gp);border-radius:6px;">
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-family:'Cairo',sans-serif;padding:2px 7px;background:var(--gp);border-radius:5px;">
                 <span style="color:#666;">الوزن</span><span style="font-weight:700;color:var(--gd);">2.5 كجم</span>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;font-family:'Cairo',sans-serif;padding:6px 10px;background:var(--gd);border-radius:6px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Cairo',sans-serif;padding:3px 7px;background:var(--gd);border-radius:5px;">
                 <span style="color:rgba(255,255,255,.8);">= الناتج</span><span style="font-weight:900;color:#fff;" class="anim-num" data-target="588000">588,000 طائر</span>
               </div>
             </div>
@@ -1551,20 +1708,20 @@
               أيام المخزون = المخزون ÷ المبيعات اليومية
             </div>
           </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">مقياس صحة المخزون:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff0f0;border-radius:6px;border-right:3px solid #c0392b;">
-                <span style="font-size:16px;">🔴</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:#c0392b;">&gt; 3 أيام</strong> — خطر تكدس</div>
+          <div style="background:#fff;border-radius:10px;padding:4px 8px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex-shrink:0;">
+            <div style="font-size:10px;color:var(--gl);font-weight:700;margin-bottom:2px;font-family:'Cairo',sans-serif;">مقياس صحة المخزون:</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:#fff0f0;border-radius:5px;border-right:3px solid #c0392b;">
+                <span style="font-size:13px;">🔴</span>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;"><strong style="color:#c0392b;">&gt; 3 أيام</strong> — خطر تكدس</div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f0f8ee;border-radius:6px;border-right:3px solid var(--gm);">
-                <span style="font-size:16px;">🟢</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:var(--gm);">1 — 2 يوم</strong> — وضع صحي</div>
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:#f0f8ee;border-radius:5px;border-right:3px solid var(--gm);">
+                <span style="font-size:13px;">🟢</span>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;"><strong style="color:var(--gm);">1 — 2 يوم</strong> — وضع صحي</div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fffbee;border-radius:6px;border-right:3px solid var(--gold);">
-                <span style="font-size:16px;">🟡</span>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;"><strong style="color:#b8860b;">&lt; 1 يوم</strong> — نقص / فرصة رفع السعر</div>
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:#fffbee;border-radius:5px;border-right:3px solid var(--gold);">
+                <span style="font-size:13px;">🟡</span>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;"><strong style="color:#b8860b;">&lt; 1 يوم</strong> — نقص / فرصة رفع السعر</div>
               </div>
             </div>
           </div>
@@ -1578,20 +1735,20 @@
               الربح = (السعر − التكلفة) × الكمية
             </div>
           </div>
-          <div style="background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex:1;">
-            <div style="font-size:11px;color:var(--gl);font-weight:700;margin-bottom:8px;font-family:'Cairo',sans-serif;">التحكم في الهامش عبر:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🌾</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">خفض FCR <strong style="color:var(--gd);">← تقليل تكلفة العلف</strong></div>
+          <div style="background:#fff;border-radius:10px;padding:4px 8px;box-shadow:0 3px 12px rgba(58,79,44,.1);flex-shrink:0;">
+            <div style="font-size:10px;color:var(--gl);font-weight:700;margin-bottom:2px;font-family:'Cairo',sans-serif;">التحكم في الهامش عبر:</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:var(--gp);border-radius:5px;">
+                <div style="width:22px;height:22px;background:var(--gd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">🌾</div>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;color:var(--tb);">خفض FCR <strong style="color:var(--gd);">← تقليل تكلفة العلف</strong></div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gm);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📣</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">التسويق الفعال <strong style="color:var(--gd);">← رفع سعر البيع</strong></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:var(--gp);border-radius:5px;">
+                <div style="width:22px;height:22px;background:var(--gm);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">📣</div>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;color:var(--tb);">التسويق الفعال <strong style="color:var(--gd);">← رفع سعر البيع</strong></div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gp);border-radius:6px;">
-                <div style="width:28px;height:28px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📉</div>
-                <div style="font-family:'Cairo',sans-serif;font-size:12px;color:var(--tb);">خفض النفوق <strong style="color:var(--gd);">← زيادة الكمية المباعة</strong></div>
+              <div style="display:flex;align-items:center;gap:6px;padding:2px 7px;background:var(--gp);border-radius:5px;">
+                <div style="width:22px;height:22px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">📉</div>
+                <div style="font-family:'Cairo',sans-serif;font-size:11px;color:var(--tb);">خفض النفوق <strong style="color:var(--gd);">← زيادة الكمية المباعة</strong></div>
               </div>
             </div>
           </div>
@@ -2066,6 +2223,112 @@
 
   sync();
   animateCounters(slides[0]);
+</script>
+
+<!-- Particles canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Slide title toast -->
+<div id="slide-toast"></div>
+
+<!-- Overview mode -->
+<div id="overview"></div>
+
+<script>
+/* ====== ENHANCEMENT SYSTEM ====== */
+
+function applyEntrance(slide) {
+  slide.querySelectorAll('.ent').forEach(el => { el.classList.remove('play'); el.style.animationDelay = ''; });
+}
+function playEntrance(slide) {
+  slide.querySelectorAll('.ent').forEach((el, i) => {
+    el.style.animationDelay = (i * 0.09) + 's';
+    void el.offsetWidth;
+    el.classList.add('play');
+  });
+}
+
+function playProgressBars(slide) {
+  slide.querySelectorAll('[data-pct]').forEach(bar => {
+    bar.style.transition = 'none'; bar.style.width = '0%';
+    requestAnimationFrame(() => { requestAnimationFrame(() => {
+      bar.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)'; bar.style.width = bar.dataset.pct + '%';
+    }); });
+  });
+}
+
+const pCanvas = document.getElementById('particles-canvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [], pRAF = null, pActive = false;
+function resizeParticles() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+resizeParticles(); window.addEventListener('resize', resizeParticles);
+function spawnParticles(count) {
+  particles = [];
+  for (let i = 0; i < count; i++) {
+    particles.push({ x: Math.random()*pCanvas.width, y: Math.random()*pCanvas.height,
+      r: Math.random()*2.5+.5, vx:(Math.random()-.5)*.6, vy:-(Math.random()*.8+.3),
+      alpha: Math.random()*.6+.3, color: Math.random()>.5?'#c9a84c':'#8aaa68' });
+  }
+}
+function tickParticles() {
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+  particles.forEach(p => {
+    p.x+=p.vx; p.y+=p.vy; p.alpha-=.003;
+    if (p.alpha<=0||p.y<-10) { p.y=pCanvas.height+5; p.x=Math.random()*pCanvas.width; p.alpha=Math.random()*.6+.3; }
+    pCtx.beginPath(); pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pCtx.fillStyle=p.color; pCtx.globalAlpha=p.alpha; pCtx.fill();
+  }); pCtx.globalAlpha=1;
+  if (pActive) pRAF=requestAnimationFrame(tickParticles);
+}
+function startParticles() { if(pActive)return; pCanvas.classList.add('show'); pActive=true; spawnParticles(90); tickParticles(); }
+function stopParticles() { pActive=false; pCanvas.classList.remove('show'); if(pRAF)cancelAnimationFrame(pRAF); pCtx.clearRect(0,0,pCanvas.width,pCanvas.height); }
+const PARTICLE_SLIDES = ['s1','s9'];
+
+function rippleDot(idx) {
+  const dots = document.querySelectorAll('.dot');
+  if (!dots[idx]) return;
+  dots[idx].classList.remove('ripple'); void dots[idx].offsetWidth; dots[idx].classList.add('ripple');
+  dots[idx].addEventListener('animationend', ()=>dots[idx].classList.remove('ripple'), {once:true});
+}
+
+const toast = document.getElementById('slide-toast');
+let toastTimer = null;
+function showToast(text) {
+  if (!text) return; toast.textContent=text; toast.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),2200);
+}
+
+const ovEl = document.getElementById('overview');
+function buildOverview() {
+  if (ovEl.childElementCount>0) return;
+  slides.forEach((sl,i) => {
+    const thumb=document.createElement('div'); thumb.className='ov-thumb'+(i===cur?' cur':''); thumb.dataset.idx=i;
+    const heading=sl.querySelector('h2,h3,.stitle');
+    const label=heading?heading.textContent.trim().slice(0,28):('Slide '+(i+1));
+    thumb.innerHTML='<div class="ov-num">'+(i+1)+'</div><div class="ov-label">'+label+'</div>';
+    thumb.addEventListener('click',()=>{closeOverview();goTo(i);}); ovEl.appendChild(thumb);
+  });
+}
+function openOverview() { buildOverview(); ovEl.classList.add('open'); ovEl.querySelectorAll('.ov-thumb').forEach((t,i)=>t.classList.toggle('cur',i===cur)); }
+function closeOverview() { ovEl.classList.remove('open'); }
+function toggleOverview() { ovEl.classList.contains('open')?closeOverview():openOverview(); }
+document.addEventListener('keydown', e => { if(e.key==='o'||e.key==='O')toggleOverview(); if(e.key==='Escape')closeOverview(); });
+
+const _goToOrig = goTo;
+goTo = function(idx) {
+  _goToOrig(idx);
+  const slide=slides[idx]; if(!slide)return;
+  applyEntrance(slide); requestAnimationFrame(()=>playEntrance(slide));
+  playProgressBars(slide);
+  if(PARTICLE_SLIDES.includes(slide.id)){startParticles();}else{stopParticles();}
+  rippleDot(idx);
+  const heading=slide.querySelector('h2,h3,.stitle');
+  if(heading)showToast(heading.textContent.trim().slice(0,40));
+  ovEl.querySelectorAll('.ov-thumb').forEach((t,i)=>t.classList.toggle('cur',i===idx));
+};
+
+if(PARTICLE_SLIDES.includes(slides[0]&&slides[0].id))startParticles();
+(function(){ const first=slides[0]; if(first){applyEntrance(first);requestAnimationFrame(()=>playEntrance(first));}  playProgressBars(first); })();
 </script>
 </body>
 </html>
